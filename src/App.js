@@ -1,101 +1,261 @@
-// Code to render the main application
-import React, { useEffect, useState } from 'react';
-import WelcomeSection from './components/WelcomeSection';
-import AboutSection from './components/AboutSection';
-import ActionSection from './components/ActionSection';
-import ContributeSection from './components/ContributeSection';
-import ExploreMapSection from './components/ExploreMapSection';
-import ScrollArrow from './components/ScrollArrow';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
-function App() {
-  const [mapKey, setMapKey] = useState(0); // State to trigger map re-initialization
-  const handleSubmit = async (formData) => {
-    // Increment the mapKey to trigger re-initialization
-    const featureServiceUrl = 'https://services1.arcgis.com/IVzPgL57Mwzk8mu1/arcgis/rest/services/S3_Simple/FeatureServer/0/addFeatures';
-    const token = 'AAPK83337061f79941cdbcba8ea16add7f1csWFIvmrzXU7TvesGSEbfGqhfxRivSP37KmfuCDfiec8kVrxhDCre40EzzsvFCLSB';
+const ExperienceForm = () => {
+    const [datetime, setDatetime] = useState('');
+    const [location, setLocation] = useState({ lat: '', long: '' });
+    const [experience, setExperience] = useState('');
+    const [selectedIdentities, setSelectedIdentities] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedSubcategory, setSelectedSubcategory] = useState('');
+    const [emotions, setEmotions] = useState({
+        sad_happy: 3,
+        anxious_calm: 3,
+        tired_awake: 3,
+        unsafe_safe: 3,
+        isolated_belonging: 3
+    });
+    const [submissionResponse, setSubmissionResponse] = useState(null);
 
-    const addFeature = async () => {
-      const feature = {
-        attributes: {
-          locationName: formData.locationName,
-          experience_date: formData.experience_date,
-          happinessSadness: formData.happinessSadness,
-          calmAnxious: formData.calmAnxious,
-          awakeTired: formData.awakeTired,
-          safety: formData.safety,
-          belonging: formData.belonging,
-          identityInterpretation: formData.identityInterpretation,
-          identityTypes: formData.identityTypes,
-          // race: formData.race,
-          // ethnicity: formData.ethnicity,
-          // age: formData.age,
-          // sex: formData.sex,
-          // sexuality: formData.sexuality,
-          // genderIdentity: formData.genderIdentity,
-          // politicalViews: formData.politicalViews,
-          // religiousBeliefs: formData.religiousBeliefs,
-          // immigrationStatus: formData.immigrationStatus,
-          // economicBracket: formData.economicBracket,
-          // otherIdentity: formData.otherIdentity,
-          finalThoughts: formData.finalThoughts,
-        },
-        geometry: {
-          x: formData.geometry.longitude,
-          y: formData.geometry.latitude,
-          spatialReference: { wkid: 4326 } // WGS 84
-        }
-      };
+    // Predefined latitude and longitude for testing
+    const testLat = 45.5016889;
+    const testLong = -122.6756296;
 
-      const response = await fetch(featureServiceUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          f: 'json',
-          token: token,
-          features: JSON.stringify([feature]),
-        }),
-      });
+    useEffect(() => {
+        console.log("Selected Identities:", selectedIdentities); // Debugging log
+    }, [selectedIdentities]);
 
-      const result = await response.json();
-      console.log('Add Feature Result:', result);
+    // Handle location access (refactored for testing)
+    const fetchLocation = () => {
+        setLocation({
+            lat: testLat,
+            long: testLong
+        });
     };
 
-    try {
-      await addFeature();
-      setMapKey(prevKey => prevKey + 1);
-      console.log('Form submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      console.log('Failed to submit form.');
-    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        // Prepare the payload
+        const payload = {
+            datetime,
+            location,
+            experience,
+            selectedIdentities,
+            emotions
+        };
+
+        console.log("Payload:", payload); // Debugging log
+
+        // Send the data to the backend
+        const response = await fetch('http://54.241.131.41:8000/api/submit-experience', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        setSubmissionResponse(data);
+    };
+
+    const handleEmotionChange = (e, emotion) => {
+        setEmotions({
+            ...emotions,
+            [emotion]: parseInt(e.target.value)
+        });
+    };
+
+    const handleCategoryChange = (e) => {
+        setSelectedCategory(e.target.value);
+        setSelectedSubcategory(''); // Reset subcategory when a new category is selected
+    };
+
+    const handleSubcategoryChange = (e) => {
+        setSelectedSubcategory(e.target.value);
+    };
+
+    const handleAddIdentity = () => {
+      if (selectedCategory && selectedSubcategory) {
+          console.log("Adding Identity:", selectedCategory, selectedSubcategory); // Debugging log
+          // Add both the category and subcategory to the selectedIdentities array
+          setSelectedIdentities([
+              ...selectedIdentities,
+              { category: selectedCategory, subcategory: selectedSubcategory }
+          ]);
+      } else {
+          console.log("Category or Subcategory not selected"); // Debugging log
+      }
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
-  return (
-    <div className="App">
-      <div className="welcome-section">
-        <WelcomeSection />
-        <ScrollArrow targetId="about-section" />
-      </div>
-      <div id='about-section'>
-        <AboutSection />
-        <ScrollArrow targetId="action-section" />
-      </div>
-      <ActionSection />
-      <div id="contribute">
-        <ContributeSection onSubmit={handleSubmit} />
-      </div>
-      <div id="explore">
-        <ExploreMapSection key={mapKey}/>
-      </div>
-    </div>
-  );
-}
+    // Options for main categories and subcategories
+    const categoryOptions = [
+        { key: 'religion', value: 'Religious Beliefs', label: 'Religion' },
+        { key: 'gender', value: 'Gender', label: 'Gender' }
+    ];
 
-export default App;
+    const subcategoryOptions = {
+        'Religious Beliefs': [
+            { value: 'Jewish', label: 'Jewish' },
+            { value: 'Muslim', label: 'Muslim' },
+            { value: 'Christian', label: 'Christian' },
+            { value: 'Atheist', label: 'Atheist' },
+            { value: 'Hindu', label: 'Hindu' }
+        ],
+        'Gender': [
+            { value: 'Male', label: 'Male' },
+            { value: 'Female', label: 'Female' },
+            { value: 'Non-binary', label: 'Non-binary' },
+            { value: 'Genderqueer', label: 'Genderqueer' }
+        ]
+    };
+
+    return (
+        <div>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="datetime-local"
+                    value={datetime}
+                    onChange={(e) => setDatetime(e.target.value)}
+                    required
+                />
+
+                <button type="button" onClick={fetchLocation}>
+                    Fetch Location
+                </button>
+                <div>Lat: {location.lat} Long: {location.long}</div>
+
+                <textarea
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                    placeholder="Name of location"
+                />
+
+                <div>
+                    <label>Select Main Identity Category:</label>
+                    <select value={selectedCategory} onChange={handleCategoryChange}>
+                        <option value="">--Select Category--</option>
+                        {categoryOptions.map(option => (
+                            <option key={option.key} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {selectedCategory && (
+                    <div>
+                        <label>Select Subcategory:</label>
+                        <select value={selectedSubcategory} onChange={handleSubcategoryChange}>
+                            <option value="">--Select Subcategory--</option>
+                            {subcategoryOptions[selectedCategory].map(option => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                        <button type="button" onClick={handleAddIdentity}>
+                            Add Identity
+                        </button>
+                    </div>
+                )}
+
+                <div>
+                    <label>Selected Identities:</label>
+                    <ul>
+                        {selectedIdentities.map((identity, index) => (
+                            <li key={index}>
+                                {identity.category}: {identity.subcategory}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div>
+                    <label>Sad - Happy:</label>
+                    <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={emotions.sad_happy}
+                        onChange={(e) => handleEmotionChange(e, 'sad_happy')}
+                    />
+                </div>
+
+                <div>
+                    <label>Anxious - Calm:</label>
+                    <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={emotions.anxious_calm}
+                        onChange={(e) => handleEmotionChange(e, 'anxious_calm')}
+                    />
+                </div>
+
+                <div>
+                    <label>Tired - Awake:</label>
+                    <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={emotions.tired_awake}
+                        onChange={(e) => handleEmotionChange(e, 'tired_awake')}
+                    />
+                </div>
+
+                <div>
+                    <label>Unsafe - Safe:</label>
+                    <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={emotions.unsafe_safe}
+                        onChange={(e) => handleEmotionChange(e, 'unsafe_safe')}
+                    />
+                </div>
+
+                <div>
+                    <label>Isolated - Belonging:</label>
+                    <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        value={emotions.isolated_belonging}
+                        onChange={(e) => handleEmotionChange(e, 'isolated_belonging')}
+                    />
+                </div>
+
+                <button type="submit">Submit</button>
+            </form>
+
+            {submissionResponse && (
+                <div>
+                    <h3>Success! The following data was added to the database:</h3>
+                    <p><strong>Experience ID:</strong> {submissionResponse.experience.experience_id}</p>
+                    <p><strong>Location:</strong> {submissionResponse.experience.location_name} (Lat: {submissionResponse.experience.latitude}, Long: {submissionResponse.experience.longitude})</p>
+                    <p><strong>Date and Time:</strong> {submissionResponse.experience.datetime}</p>
+                    <p><strong>Identities:</strong></p>
+                    <ul>
+                        {submissionResponse.identities.map((identity, index) => (
+                            <li key={index}>
+                                {identity.category}: {identity.subcategory}
+                            </li>
+                        ))}
+                    </ul>
+                    <p><strong>Emotions:</strong></p>
+                    <ul>
+                        <li>Sad - Happy: {submissionResponse.emotions.sad_happy}</li>
+                        <li>Anxious - Calm: {submissionResponse.emotions.anxious_calm}</li>
+                        <li>Tired - Awake: {submissionResponse.emotions.tired_awake}</li>
+                        <li>Unsafe - Safe: {submissionResponse.emotions.unsafe_safe}</li>
+                        <li>Isolated - Belonging: {submissionResponse.emotions.isolated_belonging}</li>
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default ExperienceForm;
