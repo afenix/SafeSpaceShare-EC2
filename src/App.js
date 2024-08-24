@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Select from 'react-select';
 
 const ExperienceForm = () => {
     const [datetime, setDatetime] = useState('');
     const [location, setLocation] = useState({ lat: '', long: '' });
     const [experience, setExperience] = useState('');
+    const [relatedToIdentity, setRelatedToIdentity] = useState(false);
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedIdentities, setSelectedIdentities] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [emotions, setEmotions] = useState({
         sad_happy: 3,
         anxious_calm: 3,
@@ -20,18 +21,12 @@ const ExperienceForm = () => {
     const testLat = 45.5016889;
     const testLong = -122.6756296;
 
-    useEffect(() => {
-        console.log("Selected Identities:", selectedIdentities); // Debugging log
-    }, [selectedIdentities]);
-
-    // Handle location access (refactored for testing)
     const fetchLocation = () => {
         setLocation({
             lat: testLat,
             long: testLong
         });
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -66,33 +61,27 @@ const ExperienceForm = () => {
         });
     };
 
-    const handleCategoryChange = (e) => {
-        setSelectedCategory(e.target.value);
-        setSelectedSubcategory(''); // Reset subcategory when a new category is selected
+    const handleCategoryChange = (selectedOptions) => {
+        setSelectedCategories(selectedOptions ? selectedOptions.map(option => option.value) : []);
     };
 
-    const handleSubcategoryChange = (e) => {
-        setSelectedSubcategory(e.target.value);
+    const handleSubcategoryChange = (category, selectedOptions) => {
+        const updatedIdentities = selectedIdentities.filter(identity => identity.category !== category);
+        const newIdentities = selectedOptions.map(option => ({
+            category,
+            subcategory: option.value
+        }));
+
+        setSelectedIdentities([
+            ...updatedIdentities,
+            ...newIdentities
+        ]);
     };
 
-    const handleAddIdentity = () => {
-      if (selectedCategory && selectedSubcategory) {
-          console.log("Adding Identity:", selectedCategory, selectedSubcategory); // Debugging log
-          // Add both the category and subcategory to the selectedIdentities array
-          setSelectedIdentities([
-              ...selectedIdentities,
-              { category: selectedCategory, subcategory: selectedSubcategory }
-          ]);
-      } else {
-          console.log("Category or Subcategory not selected"); // Debugging log
-      }
-  };
-
-
-    // Options for main categories and subcategories
+    // Options for main categories
     const categoryOptions = [
-        { key: 'religion', value: 'Religious Beliefs', label: 'Religion' },
-        { key: 'gender', value: 'Gender', label: 'Gender' }
+        { value: 'Religious Beliefs', label: 'Religion' },
+        { value: 'Gender', label: 'Gender' }
     ];
 
     const subcategoryOptions = {
@@ -129,48 +118,67 @@ const ExperienceForm = () => {
                 <textarea
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
-                    placeholder="Name of location"
+                    placeholder="Describe your experience"
                 />
 
                 <div>
-                    <label>Select Main Identity Category:</label>
-                    <select value={selectedCategory} onChange={handleCategoryChange}>
-                        <option value="">--Select Category--</option>
-                        {categoryOptions.map(option => (
-                            <option key={option.key} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                    <label>Do you believe how you feel is related to your perceived identity?</label>
+                    <div>
+                        <input
+                            type="radio"
+                            id="identityYes"
+                            name="relatedToIdentity"
+                            value="yes"
+                            onChange={() => setRelatedToIdentity(true)}
+                        />
+                        <label htmlFor="identityYes">Yes</label>
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
+                            id="identityNo"
+                            name="relatedToIdentity"
+                            value="no"
+                            onChange={() => setRelatedToIdentity(false)}
+                        />
+                        <label htmlFor="identityNo">No</label>
+                    </div>
                 </div>
 
-                {selectedCategory && (
+                {relatedToIdentity && (
                     <div>
-                        <label>Select Subcategory:</label>
-                        <select value={selectedSubcategory} onChange={handleSubcategoryChange}>
-                            <option value="">--Select Subcategory--</option>
-                            {subcategoryOptions[selectedCategory].map(option => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                        <button type="button" onClick={handleAddIdentity}>
-                            Add Identity
-                        </button>
+                        <div>
+                            <label>Select Identity Categories:</label>
+                            <Select
+                                isMulti
+                                options={categoryOptions}
+                                onChange={handleCategoryChange}
+                            />
+                        </div>
+
+                        {selectedCategories.map((category, index) => (
+                            <div key={index}>
+                                <label>Select {category} Subcategories:</label>
+                                <Select
+                                    isMulti
+                                    options={subcategoryOptions[category]}
+                                    onChange={(selectedOptions) => handleSubcategoryChange(category, selectedOptions)}
+                                />
+                            </div>
+                        ))}
+
+                        <div>
+                            <label>Selected Identities:</label>
+                            <ul>
+                                {selectedIdentities.map((identity, index) => (
+                                    <li key={index}>
+                                        {identity.category}: {identity.subcategory}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                 )}
-
-                <div>
-                    <label>Selected Identities:</label>
-                    <ul>
-                        {selectedIdentities.map((identity, index) => (
-                            <li key={index}>
-                                {identity.category}: {identity.subcategory}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
 
                 <div>
                     <label>Sad - Happy:</label>
