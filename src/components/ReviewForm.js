@@ -1,14 +1,8 @@
 import React, { useState } from 'react'
+import Select from 'react-select';
 
-const ReviewForm = ({ formData, handleChange, handleSubmit }) => {
+const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }) => {
   const [isSubmitted, setIsSubmitted] = useState(false)
-  // Add labels for each question to display label instead of numeric values stored in Feature Class.
-  const calmAnxiousLabels = ['Very Anxious', 'Anxious', 'Centered', 'Calm', 'Very Calm'];
-  const happinessSadnessLabels = ['Despondent', 'Sad', 'Balanced', 'Happy', 'Elated'];
-  const awakeTiredLabels = ['Exhausted', 'Tired', 'Awake', 'Alert', 'Energized'];
-  const safetyLabels = ['Dangerous', 'Risky', 'Uncertain', 'Secure', 'Very Safe'];
-  const belongingLabels = ['Alienated', 'Lonely', 'Ambivalent', 'Connected', 'Integrated'];
-  const identityInterpretationLabels = ['No', 'Yes', 'Uncertain'];
 
   // Converts UTC date (needed for Feature Service attribute type) to local date and time for display.
   const getLocalDateTime = (utcDate) => {
@@ -18,11 +12,8 @@ const ReviewForm = ({ formData, handleChange, handleSubmit }) => {
     return localDate.toISOString().slice(0, 16);
   };
 
-  // Converts the selected value to a label for display.
-  const getLabel = (labels, value) => labels[value];
-
   // Converts the label back to its corresponding value.
-  const labelToValue = (labels, label) => labels.indexOf(label);
+  const labelToValue = (labels, label) => labels.indexOf(label) + 1;
 
   // Convert labels back to numeric values for form submission.
   const handleInputChange = (e) => {
@@ -32,24 +23,46 @@ const ReviewForm = ({ formData, handleChange, handleSubmit }) => {
     handleChange({ target: { name, value: numericValue } });
   };
 
-  const getLabels = (name) => {
-    switch (name) {
-      case 'calmAnxious':
-        return calmAnxiousLabels;
-      case 'happinessSadness':
-        return happinessSadnessLabels;
-      case 'awakeTired':
-        return awakeTiredLabels;
-      case 'safety':
-        return safetyLabels;
-      case 'belonging':
-        return belongingLabels;
-      case 'identityInterpretation':
-        return identityInterpretationLabels;
-      default:
-        return [];
-    }
-  };
+  // Define emotion labels as options for dropdowns
+  const calmAnxiousOptions = [
+    { value: 1, label: 'Very Anxious' },
+    { value: 2, label: 'Anxious' },
+    { value: 3, label: 'Centered' },
+    { value: 4, label: 'Calm' },
+    { value: 5, label: 'Very Calm' },
+  ];
+
+  const happinessSadnessOptions = [
+    { value: 1, label: 'Despondent' },
+    { value: 2, label: 'Sad' },
+    { value: 3, label: 'Balanced' },
+    { value: 4, label: 'Happy' },
+    { value: 5, label: 'Elated' },
+  ];
+
+  const awakeTiredOptions = [
+    { value: 1, label: 'Exhausted' },
+    { value: 2, label: 'Tired' },
+    { value: 3, label: 'Awake' },
+    { value: 4, label: 'Alert' },
+    { value: 5, label: 'Energized' },
+  ];
+
+  const safetyOptions = [
+    { value: 1, label: 'Dangerous' },
+    { value: 2, label: 'Risky' },
+    { value: 3, label: 'Uncertain' },
+    { value: 4, label: 'Secure' },
+    { value: 5, label: 'Very Safe' },
+  ];
+
+  const belongingOptions = [
+    { value: 1, label: 'Alienated' },
+    { value: 2, label: 'Lonely' },
+    { value: 3, label: 'Ambivalent' },
+    { value: 4, label: 'Connected' },
+    { value: 5, label: 'Integrated' },
+  ];
 
 /**
  * Handles the form submission and scrolls to back to the "Action" section.
@@ -60,6 +73,29 @@ const ReviewForm = ({ formData, handleChange, handleSubmit }) => {
     setIsSubmitted(true);
     document.getElementById('explore-section').scrollIntoView({ behavior: 'smooth' });
   };
+
+  if (!identityCategories) {
+    return <div>Loading identity categories...</div>;
+  }
+
+  // Helper function to get category options
+  const getCategoryOptions = () => {
+    return identityCategories.categories.map(category => ({
+      value: category.category_name,
+      label: category.category_name
+    }));
+  };
+
+  // Helper function to get subcategory options based on a selected category
+  const getSubcategoryOptions = (categoryName) => {
+    return identityCategories.subcategories
+      .filter(subcategory => subcategory.category_name === categoryName)
+      .map(subcategory => ({
+        value: subcategory.subcategory_name,
+        label: subcategory.subcategory_name
+      }));
+  };
+
 
   return (
     <div className='review-form'>
@@ -93,42 +129,47 @@ const ReviewForm = ({ formData, handleChange, handleSubmit }) => {
             <input
               className='form-inputs'
               type='datetime-local'
-              name='experience_date'
-              value={formData.experience_date ? getLocalDateTime(formData.experience_date) : ''}
+              name='datetime'
+              value={formData.datetime ? getLocalDateTime(formData.datetime) : ''}
               onChange={handleChange}
               required
             />
           </div>
 
           {/* Emotion: */}
-
           <div className='form-field'>
             <label className='review-label form-labels' htmlFor='calmAnxious'>
               Stress:
             </label>
-            <input
-              type='text'
-              name='calmAnxious'
-              value={getLabel(calmAnxiousLabels, formData.calmAnxious)}
-              onChange={handleInputChange}
+            <Select
+              name='anxious_calm'
+              options={calmAnxiousOptions}
+              value={calmAnxiousOptions.find(option => option.value === formData.emotions.anxious_calm)}
+              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.anxious_calm', value: selectedOption.value } })}
+              className="basic-single"
+              classNamePrefix="select"
             />
             <label className='review-label form-labels'>
               Feeling:
             </label>
-            <input
-              type='text'
-              name='happinessSadness'
-              value={getLabel(happinessSadnessLabels, formData.happinessSadness)}
-              onChange={handleInputChange}
+            <Select
+              name='sad_happy'
+              options={happinessSadnessOptions}
+              value={happinessSadnessOptions.find(option => option.value === formData.emotions.sad_happy)}
+              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.sad_happy', value: selectedOption.value } })}
+              className="basic-single"
+              classNamePrefix="select"
             />
             <label className='review-label form-labels'>
               Alertness:
             </label>
-            <input
-              type='text'
-              name='awakeTired'
-              value={getLabel(awakeTiredLabels, formData.awakeTired)}
-              onChange={handleInputChange}
+            <Select
+              name='tired_awake'
+              options={awakeTiredOptions}
+              value={awakeTiredOptions.find(option => option.value === formData.emotions.tired_awake)}
+              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.tired_awake', value: selectedOption.value } })}
+              className="basic-single"
+              classNamePrefix="select"
             />
           </div>
 
@@ -137,12 +178,13 @@ const ReviewForm = ({ formData, handleChange, handleSubmit }) => {
             <label className='review-label form-labels' htmlFor='safety'>
               Sense of Safety:
             </label>
-            <input
-              type='text'
-              id='safety'
-              name='safety'
-              value={getLabel(safetyLabels, formData.safety)}
-              onChange={handleInputChange}
+            <Select
+              name='unsafe_safe'
+              options={safetyOptions}
+              value={safetyOptions.find(option => option.value === formData.emotions.unsafe_safe)}
+              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.unsafe_safe', value: selectedOption.value } })}
+              className="basic-single"
+              classNamePrefix="select"
             />
           </div>
 
@@ -151,31 +193,47 @@ const ReviewForm = ({ formData, handleChange, handleSubmit }) => {
             <label className='review-label form-labels' htmlFor='belonging'>
               Sense of Belonging:
             </label>
-            <input
-              type='text'
-              id='belonging'
-              name='belonging'
-              value={getLabel(belongingLabels, formData.belonging)}
-              onChange={handleInputChange}
+            <Select
+              name='isolated_belonging'
+              options={belongingOptions}
+              value={belongingOptions.find(option => option.value === formData.emotions.isolated_belonging)}
+              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.isolated_belonging', value: selectedOption.value } })}
+              className="basic-single"
+              classNamePrefix="select"
             />
           </div>
 
-          {/* Identity Related?: */}
-          <div className='form-field'>
-            <label
-              className='review-label form-labels'
-              htmlFor='identityInterpretation'
-            >
-              Identity Related?:
-            </label>
-            <input
-              type='text'
-              id='identityInterpretation'
-              name='identityInterpretation'
-              value={getLabel(identityInterpretationLabels, formData.identityInterpretation)}
-              onChange={handleInputChange}
-            />
-          </div>
+          {/* Identity Categories & Subcategories: */}
+          {formData.selectedIdentities && formData.selectedIdentities.length > 0 && (
+            <div className='form-field'>
+              <label className='review-label form-labels'>
+                Identity Categories & Subcategories:
+              </label>
+              {formData.selectedIdentities.map((identity, index) => (
+                <div key={index}>
+                  <label className='review-label form-labels'>
+                    {identity.category}:
+                  </label>
+                  <Select
+                    name={`subcategory_${index}`}
+                    options={getSubcategoryOptions(identity.category)}
+                    value={{
+                      value: identity.subcategory,
+                      label: identity.subcategory,
+                    }}
+                    onChange={(selectedOption) => {
+                      const updatedIdentities = [...formData.selectedIdentities];
+                      updatedIdentities[index].subcategory = selectedOption.value;
+                      handleChange({ target: { name: 'selectedIdentities', value: updatedIdentities } });
+                    }}
+                    className="basic-single"
+                    classNamePrefix="select"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
 
           {/* Additional: */}
           <div className='form-field'>
