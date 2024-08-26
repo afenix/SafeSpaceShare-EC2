@@ -12,17 +12,6 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
     return localDate.toISOString().slice(0, 16);
   };
 
-  // Converts the label back to its corresponding value.
-  const labelToValue = (labels, label) => labels.indexOf(label) + 1;
-
-  // Convert labels back to numeric values for form submission.
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    const labels = getLabels(name);
-    const numericValue = labelToValue(labels, value);
-    handleChange({ target: { name, value: numericValue } });
-  };
-
   // Define emotion labels as options for dropdowns
   const calmAnxiousOptions = [
     { value: 1, label: 'Very Anxious' },
@@ -77,14 +66,6 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
   if (!identityCategories) {
     return <div>Loading identity categories...</div>;
   }
-
-  // Helper function to get category options
-  const getCategoryOptions = () => {
-    return identityCategories.categories.map(category => ({
-      value: category.category_name,
-      label: category.category_name
-    }));
-  };
 
   // Helper function to get subcategory options based on a selected category
   const getSubcategoryOptions = (categoryName) => {
@@ -145,7 +126,15 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
               name='anxious_calm'
               options={calmAnxiousOptions}
               value={calmAnxiousOptions.find(option => option.value === formData.emotions.anxious_calm)}
-              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.anxious_calm', value: selectedOption.value } })}
+              onChange={(selectedOption) => handleChange({
+                target: {
+                  name: 'emotions',
+                  value: {
+                    ...formData.emotions,
+                    anxious_calm: selectedOption.value
+                  }
+                }
+              })}
               className="basic-single"
               classNamePrefix="select"
             />
@@ -156,7 +145,15 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
               name='sad_happy'
               options={happinessSadnessOptions}
               value={happinessSadnessOptions.find(option => option.value === formData.emotions.sad_happy)}
-              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.sad_happy', value: selectedOption.value } })}
+              onChange={(selectedOption) => handleChange({
+                target: {
+                  name: 'emotions',
+                  value: {
+                    ...formData.emotions,
+                    sad_happy: selectedOption.value
+                  }
+                }
+              })}
               className="basic-single"
               classNamePrefix="select"
             />
@@ -167,7 +164,15 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
               name='tired_awake'
               options={awakeTiredOptions}
               value={awakeTiredOptions.find(option => option.value === formData.emotions.tired_awake)}
-              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.tired_awake', value: selectedOption.value } })}
+              onChange={(selectedOption) => handleChange({
+                target: {
+                  name: 'emotions',
+                  value: {
+                    ...formData.emotions,
+                    tired_awake: selectedOption.value
+                  }
+                }
+              })}
               className="basic-single"
               classNamePrefix="select"
             />
@@ -182,7 +187,15 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
               name='unsafe_safe'
               options={safetyOptions}
               value={safetyOptions.find(option => option.value === formData.emotions.unsafe_safe)}
-              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.unsafe_safe', value: selectedOption.value } })}
+              onChange={(selectedOption) => handleChange({
+                target: {
+                  name: 'emotions',
+                  value: {
+                    ...formData.emotions,
+                    unsafe_safe: selectedOption.value
+                  }
+                }
+              })}
               className="basic-single"
               classNamePrefix="select"
             />
@@ -197,7 +210,15 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
               name='isolated_belonging'
               options={belongingOptions}
               value={belongingOptions.find(option => option.value === formData.emotions.isolated_belonging)}
-              onChange={(selectedOption) => handleChange({ target: { name: 'emotions.isolated_belonging', value: selectedOption.value } })}
+              onChange={(selectedOption) => handleChange({
+                target: {
+                  name: 'emotions',
+                  value: {
+                    ...formData.emotions,
+                    isolated_belonging: selectedOption.value
+                  }
+                }
+              })}
               className="basic-single"
               classNamePrefix="select"
             />
