@@ -1,12 +1,11 @@
 import React from 'react'
-import ScrollArrow from './ScrollArrow'
 import '../App.css'
 
 const AboutSection = () => {
   return (
     <div className="background-container">
       <div className='content'>
-      <h1 id='about-header'>What is <br/>SafeSpaceShare?</h1>
+      <h1 id='about-header'>What is <br/>Safe Space Share?</h1>
       <p>
         We all navigate public spaces in our unique ways, influenced by who we
         are and how others see us. These experiences shape our sense of safety,
@@ -15,7 +14,7 @@ const AboutSection = () => {
       </p>
       <br/>
       <p>
-        SafeSpaceShare (S3) is here to change that. Anonymously share your
+        Safe Space Share (S3) is here to change that. Anonymously share your
         stories, explore how your identity influences your experiences, and
         connect with the diverse perspectives of others. With S3's interactive
         map, you can uncover patterns and similarities across different
