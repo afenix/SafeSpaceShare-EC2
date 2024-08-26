@@ -1,242 +1,107 @@
-import React, { useRef, useEffect, useState, forwardRef } from 'react'
-import MapInstructions from './MapInstructions'
-import { loadModules } from 'esri-loader'
+import React, { useRef, useEffect, useState, forwardRef } from 'react';
+import mapboxgl from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import 'mapbox-gl/dist/mapbox-gl.css'; // Import Mapbox GL CSS
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'; // Import Geocoder CSS
 
-// Use forwardRef to allow the map component to be used as a ref for the parent component
-//(ContributeSection)
-const MapComponent = forwardRef(
-  ({ formData, setFormData, onMapReady }, ref) => {
-    const mapRef = useRef()
-    const [view, setView] = useState(null)
-    const [selectedPoint, setSelectedPoint] = useState(null)
-    const [pointAdded, setPointAdded] = useState(false)
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
+const MapComponent = forwardRef(({ formData, setFormData, onMapReady }, ref) => {
+  const mapRef = useRef();
+  const [map, setMap] = useState(null);
 
-    const formatDateForInput = dateString => {
-      const date = new Date(dateString)
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${year}-${month}-${day}T${hours}:${minutes}`
-    }
+  useEffect(() => {
+    const initializeMap = () => {
+      if (mapRef.current) {
+        const map = new mapboxgl.Map({
+          container: mapRef.current,
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: [-98.5795, 39.8283], // Default to the geographic center of the US
+          zoom: 2,
+          scrollZoom: false, // Disable zoom on scroll
+        });
 
-    useEffect(() => {
-      const initializeMap = async () => {
-        try {
-          const [
-            Map,
-            MapView,
-            Graphic,
-            FeatureLayer,
-            GraphicsLayer,
-            PopupTemplate,
-            Locate,
-            Search,
-            Expand
-          ] = await loadModules(
-            [
-              'esri/Map',
-              'esri/views/MapView',
-              'esri/Graphic',
-              'esri/layers/FeatureLayer',
-              'esri/layers/GraphicsLayer',
-              'esri/PopupTemplate',
-              'esri/widgets/Locate',
-              'esri/widgets/Search',
-              'esri/widgets/Expand'
-            ],
-            { css: true }
-          )
+        setMap(map);
 
-          if (mapRef.current) {
-            const map = new Map({
-              basemap: 'streets-navigation-vector'
-            })
+        // Add geolocate control if geolocation is supported
+        if ('geolocation' in navigator) {
+          const geolocateControl = new mapboxgl.GeolocateControl({
+            positionOptions: {
+              enableHighAccuracy: true,
+            },
+            trackUserLocation: true,
+            showUserHeading: true,
+          });
+          map.addControl(geolocateControl, 'top-left');
+        } else {
+          console.warn('Geolocation support is not available so the GeolocateControl will be disabled.');
+        }
 
-            const mapView = new MapView({
-              container: mapRef.current,
-              map: map,
-              center: [-98.5795, 39.8283],
-              zoom: 2,
-              navigation: {
-                mouseWheelZoomEnabled: false // Disable zoom on scroll
-              }
-            })
+        // **Add the Mapbox Geocoder (Search Input)**
+        const geocoder = new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken,
+          mapboxgl: mapboxgl, // Ensure the geocoder is linked to the Mapbox instance
+          marker: false, // Disable the default marker
+          placeholder: 'Search for a location...', // Placeholder text
+        });
 
-            setView(mapView)
+        // Add the geocoder to the map
+        map.addControl(geocoder, 'top-right');
 
-            const userLayer = new GraphicsLayer()
-            map.add(userLayer)
+        // Handle the result event to update form data when a location is selected
+        geocoder.on('result', (event) => {
+          const { result } = event;
+          const { center } = result; // center contains [lng, lat]
 
-            // Add a locate button to the view
-            const locateBtn = new Locate({
-              view: mapView
-            })
+          // Add a marker at the searched location
+          new mapboxgl.Marker()
+            .setLngLat(center)
+            .addTo(map);
 
-            // Add the locate widget to the top left corner of the view (under the zoom buttons)
-            mapView.ui.add(locateBtn, {
-              position: 'top-left'
-            })
+          // Update form data with selected location
+          setFormData((prevData) => ({
+            ...prevData,
+            location: {
+              longitude: center[0],
+              latitude: center[1],
+            },
+          }));
+        });
 
-            // Create the search widget
-            const searchWidget = new Search({
-              view: mapView
-            })
-
-            // Initialize and add the Expand widget to toggle the visibility of the Search widget
-            const searchExpand = new Expand({
-              expandIcon: 'search', // Use a search icon for the expand/collapse button. See https://developers.arcgis.com/calcite-design-system/icons/
-              expandTooltip: 'Expand Search', // Custom tooltip text for the expand button
-              view: mapView,
-              content: searchWidget
-            })
-
-            mapView.ui.add(searchExpand, {
-              position: 'top-left',
-              index: 2
-            })
-
-            // Notify the parent component when the map is ready
-            if (onMapReady) {
-              onMapReady(mapView) // Pass the MapView instance to the callback
-            }
-
-            // Click event handler
-            mapView.on('click', event => {
-              console.log('Map clicked', event.mapPoint)
-
-              const currentDateTime = new Date().toISOString()
-              const formattedDateTime = formatDateForInput(currentDateTime)
-
-              const point = {
-                type: 'point',
-                longitude: event.mapPoint.longitude,
-                latitude: event.mapPoint.latitude,
-                spatialReference: mapView.spatialReference,
-                datatime: formattedDateTime
-              }
-
-              const symbol = {
-                type: 'picture-marker',
-                url: `${process.env.PUBLIC_URL}/img/my_location_24dp_E16833.png`,
-                width: '45px',
-                height: '45px'
-              }
-
-              const popupTemplate = new PopupTemplate({
-                title: 'X Marks the Spot!',
-                content: `Location: [${point.longitude.toFixed(
-                  3
-                )}, ${point.latitude.toFixed(3)}]`
-              })
-
-              const graphic = new Graphic({
-                geometry: point,
-                symbol: symbol,
-                attributes: point,
-                popupTemplate: popupTemplate
-              })
-
-              // Log the graphic and its popup template
-              console.log('Graphic created', graphic)
-              console.log('PopupTemplate', graphic.popupTemplate)
-
-              // Remove only the previously selected graphic, not all graphics
-              const existingGraphic = mapView.graphics.find(
-                g =>
-                  g.symbol.type === 'picture-marker' &&
-                  g.symbol.url.includes('my_location_24dp_E16833.png')
-              )
-
-              if (existingGraphic) {
-                mapView.graphics.remove(existingGraphic)
-              }
-
-              // Add the new graphic to the view
-              mapView.graphics.add(graphic)
-
-              //TODO: Determine why the popup is not opening on map click
-              // Open the popup immediately
-              mapView.popup.open({
-                features: [graphic],
-                location: event.mapPoint
-              })
-
-              setSelectedPoint(point) // Update the selectedPoint state
-              setPointAdded(true)
-
-              mapView.interactionOptions = {
-                // Disable panning:
-                shiftDoubleClickZoom: false,
-                doubleClickZoom: false,
-                // Disable dragging:
-                dragPan: false
-              }
-
-              // Update form data with selected point
-              setFormData(prevData => ({
-                ...prevData,
-                location: {
-                  longitude: point.longitude,
-                  latitude: point.latitude
-                }
-              }))
-            })
-          }
-        } catch (err) {
-          console.error(err)
+        // Notify the parent component when the map is ready
+        if (onMapReady) {
+          onMapReady(map);
         }
       }
+    };
 
-      if (!view && mapRef.current) {
-        initializeMap()
-      }
-    }, [setFormData, onMapReady, view]) // Only re-run if setFormData changes
-
-    // Expose method to parent component via ref
-    if (ref) {
-      ref.current = {
-        updateFormDataWithPoint: () => {
-          if (selectedPoint) {
-            setFormData(prevData => ({
-              ...prevData,
-              location: {
-                longitude: selectedPoint.longitude,
-                latitude: selectedPoint.latitude
-              }
-            }))
-          }
-        }
-      }
+    if (!map && mapRef.current) {
+      initializeMap();
     }
+  }, [setFormData, onMapReady, map]);
 
-    return (
-      <div className='form-section'>
-        <div className='map-text-container'>
-          <h1 className='section-header dark'>
-            Let's Begin by Adding the Location of Your Experience!
-          </h1>
-          <p className='map-instructions dark'>
-            Find the location of your experience on the map below and click to
-            mark it.
-          </p>
-        </div>
-        <MapInstructions />
-        <div
-          ref={mapRef}
-          className='map-container'
-          style={{
-            borderRadius: '10px',
-            height: '50vh',
-            width: '100vw',
-            margin: '20px'
-          }}
-        ></div>
+  return (
+    <div className='form-section'>
+      <div className='map-text-container'>
+        <h1 className='section-header dark'>
+          Let's Begin by Adding the Location of Your Experience
+        </h1>
+        <p className='map-instructions dark'>
+          To get started, simply enter the name or address of your location in the search bar below.
+        </p>
       </div>
-    )
-  }
-)
+      <div
+        ref={mapRef}
+        className='map-container'
+        style={{
+          borderRadius: '10px',
+          height: '50vh',
+          width: '100vw',
+          margin: '20px',
+        }}
+      ></div>
+    </div>
+  );
+});
 
-export default MapComponent
+export default MapComponent;
