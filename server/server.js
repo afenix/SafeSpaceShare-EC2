@@ -22,8 +22,11 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../build')));
 
 // API routes
-const apiRoutes = require('./routes/api'); // Correct path to api.js
-app.use('/api', apiRoutes);
+const experienceRoutes = require('./routes/experienceRoutes'); // Route for adding user experiences to db
+const identityRoutes = require('./routes/identityRoutes'); // Route for retrieving indentity category and subcategory data from db to server to frontend
+
+app.use('/api', experienceRoutes); // Mounting experienceRoutes under /api
+app.use('/api', identityRoutes);   // Mounting identityRoutes under /api
 
 // Catch all route to serve index.html for any unmatched routes (supports React Router)
 app.get('*', (req, res) => {
