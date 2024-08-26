@@ -4,7 +4,7 @@ const LocationTimeForm = ({ formData, handleChange }) => {
   return (
     <div>
       <h1 className='section-header'>
-        Next, set the Scene:
+        Next, set the scene:
       </h1>
       <div className='form-subheader'>Share the Location and Time of Your Experience</div>
       <p className='info-text'>

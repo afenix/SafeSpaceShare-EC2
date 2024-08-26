@@ -32,7 +32,6 @@ const CustomFormComponent = ({
     <form onSubmit={handleSubmit}>
       <div id='location-time-section'>
         <LocationTimeForm formData={formData} handleChange={handleChange} />
-        {/* <ScrollArrow targetId='emotions-section' /> */}
       </div>
       <div id='emotions-container'>
         <div id='emotions-section' className='form-section'>
@@ -41,7 +40,6 @@ const CustomFormComponent = ({
             setFormData={setFormData}
             onSliderChange={handleSliderChange}
           />
-          {/* <ScrollArrow targetId='safety-section' /> */}
         </div>
       </div>
       <div id='safety-container'>
@@ -51,7 +49,6 @@ const CustomFormComponent = ({
             setFormData={setFormData}
             onSliderChange={handleSliderChange}
           />
-          {/* <ScrollArrow targetId='belonging-section' /> */}
         </div>
       </div>
       <div id='belonging-container'>
@@ -61,13 +58,11 @@ const CustomFormComponent = ({
             setFormData={setFormData}
             onSliderChange={handleSliderChange}
           />
-          {/* <ScrollArrow targetId='identity-section' /> */}
         </div>
       </div>
       <div id='identity-container'>
         <div id='identity-section' className='form-section'>
           <IdentityForm formData={formData} handleChange={handleChange} />
-          {/* <ScrollArrow targetId='final-thoughts-section' /> */}
         </div>
       </div>
       <div id='final-thoughts-container'>
@@ -77,11 +72,10 @@ const CustomFormComponent = ({
             handleChange={handleChange}
             handleSubmit={handleSubmit}
           />
-          {/* <ScrollArrow targetId='review-section' /> */}
         </div>
       </div>
       <div id='review-container'>
-        <div id='review-section' class='form-section'>
+        <div id='review-section' className='form-section'>
           <ReviewForm
             formData={formData}
             handleChange={handleChange}
