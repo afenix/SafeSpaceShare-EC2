@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import useIdentityCategories from '../hooks/useIdentityCategories.js';
 import LocationTimeForm from './LocationTimeForm.js'
 import EmotionsForm from './EmotionsForm'
 import SafetyForm from './SafetyForm'
@@ -11,63 +12,86 @@ import '../App.css'
 
 const CustomFormComponent = ({
   formData,
-  handleSliderChange,
+  setFormData,
   handleChange,
   handleSubmit
 }) => {
-  console.log('formData: ', formData)
+
+  const handleSliderChange = (emotionKey, value) => {
+    setFormData(prevData => ({
+      ...prevData,
+      emotions: {
+        ...prevData.emotions,
+        [emotionKey]: parseInt(value, 10)
+      }
+    }));
+  };
+
+  const { identityCategories } = useIdentityCategories();
 
   return (
-    <div className='form-section'>
-      <form onSubmit={handleSubmit}>
-        <div id='location-time-section'>
-          <LocationTimeForm formData={formData} handleChange={handleChange} />
-          <ScrollArrow targetId='emotions-section' />
-        </div>
-        <div id='emotions-section'>
+    <form onSubmit={handleSubmit}>
+      <div id='location-time-section'>
+        <LocationTimeForm formData={formData} handleChange={handleChange} />
+        {/* <ScrollArrow targetId='emotions-section' /> */}
+      </div>
+      <div id='emotions-container'>
+        <div id='emotions-section' className='form-section'>
           <EmotionsForm
             formData={formData}
+            setFormData={setFormData}
             onSliderChange={handleSliderChange}
           />
-          <ScrollArrow targetId='safety-section' />
+          {/* <ScrollArrow targetId='safety-section' /> */}
         </div>
-
-        <div id='safety-section'>
-          <SafetyForm formData={formData} onSliderChange={handleSliderChange} />
-          <ScrollArrow targetId='belonging-section' />
+      </div>
+      <div id='safety-container'>
+        <div id='safety-section' className='form-section'>
+          <SafetyForm
+            formData={formData}
+            setFormData={setFormData}
+            onSliderChange={handleSliderChange}
+          />
+          {/* <ScrollArrow targetId='belonging-section' /> */}
         </div>
-
-        <div id='belonging-section'>
+      </div>
+      <div id='belonging-container'>
+        <div id='belonging-section' className='form-section'>
           <BelongingForm
             formData={formData}
+            setFormData={setFormData}
             onSliderChange={handleSliderChange}
           />
-          <ScrollArrow targetId='identity-section' />
+          {/* <ScrollArrow targetId='identity-section' /> */}
         </div>
-
-        <div id='identity-section'>
+      </div>
+      <div id='identity-container'>
+        <div id='identity-section' className='form-section'>
           <IdentityForm formData={formData} handleChange={handleChange} />
-          <ScrollArrow targetId='final-thoughts-section' />
+          {/* <ScrollArrow targetId='final-thoughts-section' /> */}
         </div>
-
-        <div id='final-thoughts-section'>
+      </div>
+      <div id='final-thoughts-container'>
+        <div id='final-thoughts-section' className='form-section'>
           <FinalThoughtsForm
             formData={formData}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
           />
-          <ScrollArrow targetId='review-section' />
+          {/* <ScrollArrow targetId='review-section' /> */}
         </div>
-
-        <div id='review-section'>
+      </div>
+      <div id='review-container'>
+        <div id='review-section' class='form-section'>
           <ReviewForm
             formData={formData}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
+            identityCategories={identityCategories}
           />
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   )
 }
 
