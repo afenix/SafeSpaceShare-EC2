@@ -183,7 +183,7 @@ const ExploreMapComponent = () => {
                     format: { dateFormat: 'short-date-short-time' }
                   },
                   {
-                    fieldName: 'experience_date',
+                    fieldName: 'datetime',
                     label: 'Date & Time',
                     format: { dateFormat: 'short-date-short-time' }
                   },
@@ -297,7 +297,7 @@ const ExploreMapComponent = () => {
 
   return (
     <div id='explore-section' className='explore-section'>
-      <h1 className='form-headers'>Explore the Map</h1>
+      <h1 className='section-header'>Explore the Map</h1>
       <p className='info-text'>
         Explore user experiences by selecting different emotions from the
         dropdown menu below. Click on a point to view more details.

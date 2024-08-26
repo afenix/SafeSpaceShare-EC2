@@ -14,8 +14,8 @@ const SafetyForm = ({ formData, onSliderChange }) => {
       <SliderComponent
         labelLeft="NO!"
         labelRight="YES!"
-        value={formData.safety}
-        onChange={(value) => onSliderChange('safety', value)}
+        value={formData.emotions.unsafe_safe}
+        onChange={(value) => onSliderChange('unsafe_safe', value)}
         emojiLabels={['🚨', '⚠️', '🤷', '🤝', '💚 ']}
         labels={['Dangerous', 'Risky', 'Uncertain', 'Secure', 'Very Safe']}
       />

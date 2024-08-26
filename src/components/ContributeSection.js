@@ -5,28 +5,23 @@ import ScrollArrow from './ScrollArrow'
 import '../App.css'
 
 const ContributeSection = ({ onSubmit }) => {
-  // Utily function for converting a local date string to a unix timestamp
-  const convertToUnixTimestamp = dateString => {
-    const date = new Date(dateString)
-    return date.getTime()
-  }
 
   const initialFormData = {
-    locationName: '',
-    experience_date: '',
-    happinessSadness: '',
-    calmAnxious: '',
-    awakeTired: '',
-    safety: '',
-    belonging: '',
-    identityInterpretation: '',
-     // identityTypes: '',
-    finalThoughts: '',
-    geometry: {
+    datetime: '',
+    location: {
       longitude: null,
       latitude: null
-    }
-  }
+    },
+    emotions: {
+      sad_happy: 3,
+      anxious_calm: 3,
+      tired_awake: 3,
+      unsafe_safe: 3,
+      isolated_belonging: 3
+    },
+    selectedIdentities: [], // This should be an empty array to store objects
+    finalThoughts: '',
+  };
 
   const [formData, setFormData] = useState(initialFormData)
 
@@ -37,15 +32,13 @@ const ContributeSection = ({ onSubmit }) => {
     if (mapComponentRef.current) {
       mapComponentRef.current.updateFormDataWithPoint = () => {
         if (mapComponentRef.current.selectedPoint) {
-          const { longitude, latitude, experience_date } =
+          const { datetime, location, locationName } =
             mapComponentRef.current.selectedPoint
           setFormData(prevData => ({
             ...prevData,
-            experience_date,
-            geometry: {
-              longitude,
-              latitude
-            }
+            datetime,
+            location,
+            locationName
           }))
         }
       }
@@ -75,12 +68,16 @@ const ContributeSection = ({ onSubmit }) => {
     if (mapComponentRef.current) {
       mapComponentRef.current.updateFormDataWithPoint()
     }
-    const formDataWithTimestamp = {
-      ...formData,
-      experience_date: convertToUnixTimestamp(formData.experience_date) // Convert to Unix timestamp
+
+    console.log('formData in the ContributeSection: ', formData)
+    // Check if latitude and longitude are set
+    if (formData.location.latitude === null || formData.location.longitude === null) {
+      window.alert('Please select a location on the map before submitting.');
+      return;
     }
+
     // Submit the form data to the server or API here
-    onSubmit(formDataWithTimestamp)
+    onSubmit(formData)
 
     // Clear the form inputs
     setFormData(initialFormData)
@@ -103,9 +100,9 @@ const ContributeSection = ({ onSubmit }) => {
           setFormData={setFormData}
           onMapReady={() => {}}
         />
-        <ScrollArrow targetId='form-section' />
+        {/* <ScrollArrow targetId='form-section' /> */}
       </div>
-      <div id='form-section'>
+      <div className='experience-form-section'>
         <CustomFormComponent
           formData={formData}
           setFormData={setFormData}

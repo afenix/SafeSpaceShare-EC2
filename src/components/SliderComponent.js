@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SliderComponent = ({ labelLeft, labelRight, value, onChange, emojiLabels, labels }) => {
+const SliderComponent = ({ value, onChange, emojiLabels, labels }) => {
   return (
     <div className="slider-section">
       <div className="slider-labels">
@@ -10,8 +10,8 @@ const SliderComponent = ({ labelLeft, labelRight, value, onChange, emojiLabels, 
       </div>
       <input
         type="range"
-        min="0"
-        max="4"
+        min="1"
+        max="5"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="slider"

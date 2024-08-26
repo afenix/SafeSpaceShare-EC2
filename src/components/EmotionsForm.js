@@ -1,49 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SliderComponent from './SliderComponent';
 
-const EmotionsForm = ({ formData, onSliderChange }) => {
-  const [emotions, setEmotions] = useState({
-    anxiousCalm: 2,
-    sadHappy: 2,
-    exhaustedAwake: 2,
-  });
+const EmotionsForm = ({ formData, setFormData }) => {
 
-  const handleSliderChange = (emotion) => (event) => {
-    setEmotions({ ...emotions, [emotion]: event.target.value });
+  const handleSliderChange = (emotionKey, value) => {
+    const newEmotions = {
+      ...formData.emotions,
+      [emotionKey]: parseInt(value, 10),
+    };
+
+    setFormData(prevData => ({
+      ...prevData,
+      emotions: newEmotions,
+    }));
   };
 
   return (
     <div>
-      <h1 className="section-header">How do you feel?</h1>
-      <p className="info-text">
-        Emotions can be complex, but we'd like to know how you're feeling right now.
-        Please use the sliders below to rate your current emotional state:
+      <h1 className="section-header dark">How do you feel?</h1>
+      <p className="info-text dark">
+      Please use the sliders below to rate your current emotional state:
       </p>
       <SliderComponent
-        labelLeft="Anxious"
-        labelRight="Calm"
-        value={formData.calmAnxious}
-        onChange={(value) => onSliderChange('calmAnxious', value)}
+        value={formData.emotions.anxious_calm}
+        onChange={(value) => handleSliderChange('anxious_calm', value)}
         emojiLabels={['😟', '😕', '😐', '🙂', '😌']}
         labels={['Very Anxious', 'Anxious', 'Centered', 'Calm', 'Very Calm']}
       />
       <SliderComponent
-        labelLeft="Sad"
-        labelRight="Happy"
-        value={formData.happinessSadness}
-        onChange={(value) => onSliderChange('happinessSadness', value)}
+        value={formData.emotions.sad_happy}
+        onChange={(value) => handleSliderChange('sad_happy', value)}
         emojiLabels={['😢', '😞', '😐', '😊', '😁']}
         labels={['Despondent', 'Sad', 'Balanced', 'Happy', 'Elated']}
       />
       <SliderComponent
-        labelLeft="Exhausted"
-        labelRight="Awake"
-        value={formData.awakeTired}
-        onChange={(value) => onSliderChange('awakeTired', value)}
+        value={formData.emotions.tired_awake}
+        onChange={(value) => handleSliderChange('tired_awake', value)}
         emojiLabels={['😴', '😪', '😐', '🙂', '😃']}
         labels={['Exhausted', 'Tired', 'Awake', 'Alert', 'Energized']}
       />
-
     </div>
   );
 };

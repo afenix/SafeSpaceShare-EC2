@@ -11,8 +11,8 @@ const BelongingForm = ({ formData, onSliderChange }) => {
       <SliderComponent
         labelLeft="NO!"
         labelRight="YES!"
-        value={formData.belonging}
-        onChange={(value) => onSliderChange('belonging', value)}
+        value={formData.isolated_belonging}
+        onChange={(value) => onSliderChange('isolated_belonging', value)}
         emojiLabels={['😶‍🌫️', '😔', '🤷', '🤗', '🥰']}
         labels={['Alienated', 'Lonely', 'Ambivalent', 'Connected', 'Integrated']}
       />

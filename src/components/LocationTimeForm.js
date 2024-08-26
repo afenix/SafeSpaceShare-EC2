@@ -4,7 +4,7 @@ const LocationTimeForm = ({ formData, handleChange }) => {
   return (
     <div>
       <h1 className='section-header'>
-        Next, Set the Scene:
+        Next, set the Scene:
       </h1>
       <div className='form-subheader'>Share the Location and Time of Your Experience</div>
       <p className='info-text'>
@@ -28,8 +28,8 @@ const LocationTimeForm = ({ formData, handleChange }) => {
           <input
             className='form-inputs'
             type='datetime-local'
-            name='experience_date'
-            value={formData.experience_date}
+            name='datetime'
+            value={formData.datetime}
             onChange={handleChange}
             required
           />

@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState, forwardRef } from 'react'
 import MapInstructions from './MapInstructions'
 import { loadModules } from 'esri-loader'
 
-// Use forwardRef to allow the map component to be used as a ref for the parent component (ContributeSection)
+// Use forwardRef to allow the map component to be used as a ref for the parent component
+//(ContributeSection)
 const MapComponent = forwardRef(
   ({ formData, setFormData, onMapReady }, ref) => {
     const mapRef = useRef()
@@ -114,7 +115,7 @@ const MapComponent = forwardRef(
                 longitude: event.mapPoint.longitude,
                 latitude: event.mapPoint.latitude,
                 spatialReference: mapView.spatialReference,
-                experience_date: formattedDateTime
+                datatime: formattedDateTime
               }
 
               const symbol = {
@@ -177,8 +178,7 @@ const MapComponent = forwardRef(
               // Update form data with selected point
               setFormData(prevData => ({
                 ...prevData,
-                experience_date: point.experience_date,
-                geometry: {
+                location: {
                   longitude: point.longitude,
                   latitude: point.latitude
                 }
@@ -202,8 +202,7 @@ const MapComponent = forwardRef(
           if (selectedPoint) {
             setFormData(prevData => ({
               ...prevData,
-              experience_date: selectedPoint.experience_date,
-              geometry: {
+              location: {
                 longitude: selectedPoint.longitude,
                 latitude: selectedPoint.latitude
               }
@@ -216,10 +215,10 @@ const MapComponent = forwardRef(
     return (
       <div className='form-section'>
         <div className='map-text-container'>
-          <h1 className='section-header'>
+          <h1 className='section-header dark'>
             Let's Begin by Adding the Location of Your Experience!
           </h1>
-          <p className='map-instructions'>
+          <p className='map-instructions dark'>
             Find the location of your experience on the map below and click to
             mark it.
           </p>
