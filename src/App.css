@@ -7,11 +7,56 @@
   scroll-behavior: smooth;
   color: #636363;
   overflow-y: hidden;
-
 }
 
 form {
   margin: 0;
+}
+
+.map-popup-text {
+  font-family: "Dosis", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  color: #636363;
+  padding: 0 20% 5%;
+  font-size: 16px;
+}
+
+.map-button-group {
+  display: flex; /* Use flexbox for easy horizontal alignment */
+  justify-content: space-around; /* Distribute buttons with space between */
+}
+
+.map-option-button {
+  padding: 10px 25px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #4a90e2;
+  background-color: #ffd813;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  text-transform: uppercase;
+}
+
+.map-option-button:hover {
+  background-color: #fbc02d;
+  transform: scale(1.05);
+}
+
+.map-option-button:focus {
+  outline: none;
+}
+
+.map-option-button:active {
+  background-color: #e6ac00;
+}
+
+.map-option-button.selected {
+  background-color: #fbc02d;
+  transform: scale(1.05);
+  color: #ffffff;
 }
 
 /* Reset styles specifically for the Mapbox Geocoder input */
@@ -132,6 +177,7 @@ form {
 #about-subtitle, #about-header {
   text-align: center;
   font-family: "Madimi One", sans-serif;
+  color: white;
   margin: 20px 0 20px 0;
 }
 
@@ -181,16 +227,16 @@ form {
   margin: 10px;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 2rem;
   margin-top: 50px;
 }
 
 .navigation-buttons button {
-  padding: 10px 25px;
+  padding: 2% 2%;
   font-size: 20px;
   font-weight: bold;
-  color: #4a90e2; /* Blue font color */
-  background-color: #ffd813; /* Yellow background */
+  color: white;
+  background-color: #78b8cb; /* Yellow background */
   border: none;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
@@ -210,15 +256,24 @@ form {
 /* Form Styling */
 
 .form-section {
-  /* margin-left: 2rem;
-  margin-right: 2rem;
-  padding: 20px;  */
-  min-height: 100vh; /* Ensure the section is at least as tall as the viewport */
-  box-sizing: border-box; /* Include padding in width and height calculations */
-  display: flex; /* Make the section a flex container */
-  flex-direction: column; /* Stack content vertically */
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
+  margin: 0 5%;
+  padding: 2rem 0;
+  text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Landscape Mode Adjustments */
+@media only screen and (orientation: landscape) {
+  .form-section {
+    height: auto; /* Allow content to fit within the container */
+    max-height: 100vh; /* Prevent overflowing in landscape mode */
+    padding: 2rem 2%;
+  }
 }
 
 #map-section {
@@ -242,7 +297,7 @@ form {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 25px 50px;
+  /* padding: 25px 50px; */
   background-color: #78b8cb;
 }
 
@@ -369,10 +424,10 @@ input[type="datetime-local"] {
 }
 
 #emotions-section {
-  margin: 0 3.5rem 0 3.5rem ;
+  /* margin: 0 3.5rem 0 3.5rem ;
   padding: 2rem 0 2rem 0;
   text-align: center;
-  height: 100vh;
+  height: 100vh; */
 }
 
 #safety-container {
@@ -380,10 +435,10 @@ input[type="datetime-local"] {
 }
 
 #safety-section {
-  margin: 0 2.5rem 0 2.5rem ;
+  /* margin: 0 2.5rem 0 2.5rem ;
   padding: 20px;
   text-align: center;
-  height: 100vh;
+  height: 100vh; */
 }
 
 #belonging-container {
@@ -391,10 +446,10 @@ input[type="datetime-local"] {
 }
 
 #belonging-section {
-  margin: 0 2.5rem 0 2.5rem !important;
+  /* margin: 0 2.5rem 0 2.5rem !important;
   padding: 20px !important;
   text-align: center;
-  height: 100vh;
+  height: 100vh; */
 }
 
 .warning {
