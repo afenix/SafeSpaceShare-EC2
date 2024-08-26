@@ -5,12 +5,11 @@ import AboutSection from './components/AboutSection';
 import ActionSection from './components/ActionSection';
 import ContributeSection from './components/ContributeSection';
 import ExploreMapSection from './components/ExploreMapSection';
-import ScrollArrow from './components/ScrollArrow';
 import './App.css';
 
 const App = () => {
-  const [mapKey, setMapKey] = useState(0); // State to trigger map re-initialization
-  const [submissionResponse, setSubmissionResponse] = useState(null);
+  const [mapKey] = useState(0); // State to trigger map re-initialization
+  const [setSubmissionResponse] = useState(null);
 
   const handleSubmit = async (formData) => {
     // Prepare the payload
@@ -46,11 +45,9 @@ const App = () => {
     <div className="App">
       <div id="welcome-section">
         <WelcomeSection />
-        {/* <ScrollArrow targetId="about-section" /> */}
       </div>
       <div id='about-section'>
         <AboutSection />
-        {/* <ScrollArrow targetId="action-section" /> */}
       </div>
       <ActionSection />
       <div id="contribute">

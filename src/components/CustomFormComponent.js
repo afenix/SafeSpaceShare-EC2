@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import useIdentityCategories from '../hooks/useIdentityCategories.js';
 import LocationTimeForm from './LocationTimeForm.js'
 import EmotionsForm from './EmotionsForm'
@@ -7,7 +7,6 @@ import BelongingForm from './BelongingForm'
 import IdentityForm from './IdentityForm'
 import FinalThoughtsForm from './FinalThoughtsForm.js'
 import ReviewForm from './ReviewForm.js'
-import ScrollArrow from './ScrollArrow'
 import '../App.css'
 
 const CustomFormComponent = ({

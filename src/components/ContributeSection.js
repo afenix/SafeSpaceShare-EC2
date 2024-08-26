@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import MapComponent from './MapComponent'
 import CustomFormComponent from './CustomFormComponent'
-import ScrollArrow from './ScrollArrow'
 import '../App.css'
 
 const ContributeSection = ({ onSubmit }) => {
