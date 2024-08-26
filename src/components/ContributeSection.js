@@ -4,13 +4,15 @@ import CustomFormComponent from './CustomFormComponent'
 import '../App.css'
 
 const ContributeSection = ({ onSubmit }) => {
-
+  // Initial form data structure - with emotions set to "3" to handle case if user does not
+  // update the slider and wants to keep the neutral emotions.
   const initialFormData = {
     datetime: '',
     location: {
-      longitude: null,
-      latitude: null
+      longitude: '',
+      latitude: ''
     },
+    locationName: '',
     emotions: {
       sad_happy: 3,
       anxious_calm: 3,
@@ -22,30 +24,16 @@ const ContributeSection = ({ onSubmit }) => {
     finalThoughts: '',
   };
 
+  // state to manage form data
   const [formData, setFormData] = useState(initialFormData)
-
+ console.log('formData in ContributeSection: ', formData)
+  // ref to access MapComponent methods - so that lat and long can be added to formData from MapComponent
+  // instead of relying on useEffect
   const mapComponentRef = useRef(null)
 
-  // useEffect hook to update the formData state with the selected point's longitude and latitude
-  useEffect(() => {
-    if (mapComponentRef.current) {
-      mapComponentRef.current.updateFormDataWithPoint = () => {
-        if (mapComponentRef.current.selectedPoint) {
-          const { datetime, location, locationName } =
-            mapComponentRef.current.selectedPoint
-          setFormData(prevData => ({
-            ...prevData,
-            datetime,
-            location,
-            locationName
-          }))
-        }
-      }
-    }
-  }, [mapComponentRef])
-
-  // Handles form input changes and updates the formData state.
+  // Handles form input changes and updates the formData state
   const handleChange = e => {
+    console.log('formData in the ContributeSection: ', formData)
     const { name, value } = e.target
     setFormData(prevFormData => ({
       ...prevFormData,
@@ -53,7 +41,7 @@ const ContributeSection = ({ onSubmit }) => {
     }))
   }
 
-  // Handles slider input changes and updates the formData state.
+  // Handles slider input changes and updates the formData state (user emotions)
   const handleSliderChange = (emotion, value) => {
     setFormData(prevData => ({
       ...prevData,
@@ -68,9 +56,8 @@ const ContributeSection = ({ onSubmit }) => {
       mapComponentRef.current.updateFormDataWithPoint()
     }
 
-    console.log('formData in the ContributeSection: ', formData)
-    // Check if latitude and longitude are set
-    if (formData.location.latitude === null || formData.location.longitude === null) {
+    // Before submitting, make sure the user has selected a location on the map
+    if (formData.location.latitude === '' || formData.location.longitude === '') {
       window.alert('Please select a location on the map before submitting.');
       return;
     }
@@ -78,7 +65,7 @@ const ContributeSection = ({ onSubmit }) => {
     // Submit the form data to the server or API here
     onSubmit(formData)
 
-    // Clear the form inputs
+    // Reset the form data after submission
     setFormData(initialFormData)
 
     // Show success alert
@@ -99,7 +86,6 @@ const ContributeSection = ({ onSubmit }) => {
           setFormData={setFormData}
           onMapReady={() => {}}
         />
-        {/* <ScrollArrow targetId='form-section' /> */}
       </div>
       <div className='experience-form-section'>
         <CustomFormComponent
