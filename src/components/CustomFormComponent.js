@@ -30,8 +30,10 @@ const CustomFormComponent = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div id='location-time-section'>
-        <LocationTimeForm formData={formData} handleChange={handleChange} />
+       <div id='location-time-container'>
+        <div id='location-time-section' className='form-section'>
+          <LocationTimeForm formData={formData} handleChange={handleChange} />
+        </div>
       </div>
       <div id='emotions-container'>
         <div id='emotions-section' className='form-section'>
