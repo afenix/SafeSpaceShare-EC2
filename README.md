@@ -1,26 +1,46 @@
-# SafeSpaceShare
+# Safe Space Share
 
-SafeSpaceShare is a mobile-first React application designed to collect and visualize personal experiences related to emotional well-being and safety. It utilizes the ArcGIS JavaScript API for interactive mapping and leverages ArcGIS Online (AGOL) to store user-generated data securely on a feature service. The application is built on the React framework to facilitate learning and ensure scalability for future growth and enhancements.
+Safe Space Share is a mobile-first React application designed to collect and visualize personal experiences related to emotional well-being and safety. The application is built with modern web technologies to ensure scalability and a responsive user experience across both mobile devices and desktops.
 
-## Features
+#### System Architecture
 
-* **Mobile-First Design:** Designed to work on mobile devices and desktops.
-* **Interactive Mapping:** Visualize and explore user experiences on a map.
-* **Emotional Well-being Data Collection:** Users can share their feelings and experiences related to happiness, calmness, safety, belonging, and more.
-* **Data Security:** User data is stored securely on an ArcGIS Online feature service.
+- **Frontend**:
+    - **React**: Provides a dynamic and responsive user interface.
+    - **Bootstrap**: Used for styling and ensuring a consistent, responsive design across different devices.
+- **Backend**:
+    - **Express**: Handles API requests and server-side logic.
+    - **Node.js**: The runtime environment for executing JavaScript on the server.
+    - **npm**: Manages dependencies and scripts for the application.
+    - **nvm**: Used for managing multiple versions of Node.js.
+- **Database**:
+    - **AWS RDS PostgreSQL**: For robust data storage.
+    - **PostGIS**: Extension that provides geospatial capabilities.
+- **Web Server**:
+    - **Apache**: Serves as a proxy, routing requests between the frontend and backend.
+- **Hosting & Deployment**:
+    - **EC2 Instance**: The entire application, including the frontend, backend, and database connections, is fully hosted and served on an Amazon EC2 instance. This ensures reliable performance and scalability.
+- **Mapping & Geolocation**:
+    - **Google Maps API**: Used for geolocation services.
+    - **Mapbox GL JS API**: Used for rendering the final heatmap, offering interactive and visually compelling map visualizations.
+
+#### Features
+
+- **Mobile-First Design**: Optimized for mobile devices but fully functional on desktops, ensuring accessibility across various platforms.
+- **Interactive Mapping**: Visualize and explore user experiences on a map with detailed heatmaps and other layers that represent emotional well-being data.
+- **Emotional Well-being Data Collection**: Users can share their feelings and experiences related to happiness, calmness, safety, belonging, and more, which are then mapped to specific locations.
+- **Data Security**: User data is securely stored in a PostgreSQL database hosted on AWS RDS, with geospatial data managed through the PostGIS extension.
 
 ## Getting Started
 
 ### Prerequisites
 
 * **Node.js and npm (or yarn):** Make sure you have Node.js and either npm or yarn installed on your local machine. You can check this by running `node -v` and `npm -v` (or `yarn -v`) in your terminal.
-* **ArcGIS Developer Account:** Create a free ArcGIS Developer account to access the ArcGIS JavaScript API. You can sign up here: [ArcGIS Developer](https://developers.arcgis.com/)
 
 ### Installation
 
 1. **Clone the Repository:**
     ```sh
-    git clone https://github.com/afenix/safespaceshare.git
+    git clone https://github.com/afenix/safespaceshare-ec2.git
     cd safespaceshare
     ```
 
