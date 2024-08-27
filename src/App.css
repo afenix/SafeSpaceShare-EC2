@@ -257,14 +257,6 @@ form {
   text-transform: uppercase;
 }
 
-#share-button {
-  background-color: #bd831f; /* Yellow background */
-}
-
-#explore-button {
-  background-color: #78b8cb;
-}
-
 .navigation-buttons button:hover {
   background-color: #fbc02d; /* Slightly darker yellow on hover */
   transform: scale(1.05);
@@ -273,6 +265,15 @@ form {
 .navigation-buttons button:focus {
   outline: none;
 }
+
+#share-button {
+  background-color: #bd831f; /* Yellow background */
+}
+
+#explore-button {
+  background-color: #78b8cb;
+}
+
 
 
 /* Form Styling */
@@ -622,7 +623,7 @@ input[type="datetime-local"] {
   margin: 10px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10rem;
   margin-top: 50px;
   color: #4a90e2;
 }
@@ -638,7 +639,7 @@ input[type="datetime-local"] {
   transition: background-color 0.3s, transform 0.3s;
   text-transform: uppercase;
   align-self: center; /* Center the submit button horizontally */
-  width: 10em;
+  width: 15em;
 }
 
 .option-button:hover {
@@ -664,16 +665,19 @@ input[type="datetime-local"] {
 
 #review-container {
   background-color: #78b8cb;
+  width: 100%;
 }
 
 #review-section {
-  height: 100%;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  /* margin: 0 3rem 0 3rem; */
+  height: auto;
 }
 
 .review-form {
@@ -682,11 +686,22 @@ input[type="datetime-local"] {
   width: 70%;
 }
 
-/* Media query for smaller screens (adjust breakpoint as needed) */
 @media (max-width: 768px) {
   .review-form  {
-    width: 90%; /* Increase width for smaller screens */
-    margin: 10px auto; /* Reduce margins for smaller screens */
+    width: 90%;
+    margin: 10px auto;
+  }
+}
+
+@media (orientation: landscape) {
+  #review-section {
+    margin: 20px auto;
+    width: 90%;
+  }
+
+  .review-form {
+    width: 100%;
+    max-width: 1200px;
   }
 }
 
@@ -694,25 +709,25 @@ input[type="datetime-local"] {
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center items horizontally */
-  gap: 20px; /* Add some gap between form-field divs */
+  align-items: center;
+  gap: 20px;
   width: 100%;
 }
 
 .review-form .form-group {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center items horizontally */
+  align-items: center;
   width: 100%;
 }
 
 .review-form .form-field {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Align items to the left */
-  width: 100%; /* Make sure it takes the full width of the container */
-  max-width: 400px; /* Set a maximum width for the form fields */
-  margin: 0 auto; /* Center the form-field container */
+  align-items: flex-start;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .review-form label {

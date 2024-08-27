@@ -15,10 +15,10 @@ const AboutSection = () => {
         By sharing your stories, we can build a world where everyone feels safe, seen, and valued. Join us in creating a future where we all belong.
         </p>
         <div className="navigation-buttons">
-          <button id='share-button' onClick={() => document.getElementById('contribute-section').scrollIntoView({ behavior: 'smooth' })}>
+          <button className='option-button' id='share-button' onClick={() => document.getElementById('contribute-section').scrollIntoView({ behavior: 'smooth' })}>
             Share Your Experience
           </button>
-          <button id='explore-button' onClick={() => document.getElementById('explore-section').scrollIntoView({ behavior: 'smooth' })}>
+          <button className='option-button' id='explore-button' onClick={() => document.getElementById('explore-section').scrollIntoView({ behavior: 'smooth' })}>
             Explore Experiences
           </button>
         </div>
