@@ -1,334 +1,305 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { loadModules } from 'esri-loader'
-import '../App.css'
+import React, { useState, useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
-const ExploreMapComponent = () => {
-  const mapRef = useRef()
-  const [view, setView] = useState(null)
-  const featureLayerRef = useRef()
-  const [selectedAttribute, setSelectedAttribute] = useState('happinessSadness')
-  const [isHeatmap, setIsHeatmap] = useState(false)
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-  // create array of feature layer attribute keys
-  const attributes = [
-    'happinessSadness',
-    'calmAnxious',
-    'awakeTired',
-    'safety',
-    'belonging'
-  ]
+const ExploreMapSection = () => {
+  const [mapInstance, setMapInstance] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('sad_happy');
 
-  // create object of keys that correspond to the emotional attributes and values as their respective labels
-  const attributeLabels = {
-    happinessSadness: 'Feeling',
-    calmAnxious: 'Anxious',
-    awakeTired: 'Alertness',
-    safety: 'Safety',
-    belonging: 'Belonging'
-  }
-
-  // Mapping of emotional states to corresponding emojis and labels.
-  const legendMapping = {
-    happinessSadness: {
-      emojis: ['😁', '😊', '😐', '😞', '😢'],
-      labels: ['Elated', 'Happy', 'Balanced', 'Sad', 'Despondent']
-    },
-    calmAnxious: {
-      emojis: ['😌', '🙂', '😐', '😕', '😟'],
-      labels: ['Very Calm', 'Calm', 'Centered', 'Anxious', 'Very Anxious']
-    },
-    awakeTired: {
-      emojis: ['😃', '🙂', '😐', '😪', '😴'],
-      labels: ['Energized', 'Alert', 'Awake', 'Tired', 'Exhausted']
-    },
-    safety: {
-      emojis: ['💚', '🤝', '🤷', '⚠️', '🚨'],
-      labels: ['Very Safe', 'Secure', 'Uncertain', 'Risky', 'Dangerous']
-    },
-    belonging: {
-      emojis: ['🥰', '🤗', '🤷', '😔', '😶‍🌫️'],
-      labels: ['Integrated', 'Connected', 'Ambivalent', 'Lonely', 'Alienated']
-    }
-  }
-
-  const featureServiceUrl =
-    'https://services1.arcgis.com/IVzPgL57Mwzk8mu1/arcgis/rest/services/S3_Simple/FeatureServer'
-
-  // Function to create a custom legend that will display human-readable labels and match to corresponding map symbols
-  const createLegend = attribute => {
-    const { emojis, labels } = legendMapping[attribute]
-    return labels.map((label, index) => ({
-      value: String(index),
-      label: `${label}`,
-      symbol: {
-        type: 'simple-marker',
-        color: ['green', 'lightgreen', 'yellow', 'orange', 'red'][index],
-        size: '15px',
-        outline: {
-          color: 'white',
-          width: 1
-        }
-      }
-    }))
-  }
-
-  // Heatmap renderer for feature layer
-  const createHeatmapRenderer = attribute => ({
-    type: 'heatmap',
-    field: attribute,
-    colorStops: [
-      { color: 'rgba(63, 40, 102, 0)', ratio: 0 },
-      { color: '#472b77', ratio: 0.083 },
-      { color: '#4e3c8a', ratio: 0.166 },
-      { color: '#6351aa', ratio: 0.249 },
-      { color: '#7a66cc', ratio: 0.332 },
-      { color: '#9580e5', ratio: 0.415 },
-      { color: '#b29ffb', ratio: 0.498 },
-      { color: '#d3bdfc', ratio: 0.581 },
-      { color: '#f2dfff', ratio: 0.664 },
-      { color: '#fdf0ff', ratio: 0.747 },
-      { color: '#fffdfa', ratio: 1 }
+  const options = {
+    emotions: [
+      { value: 'sad_happy', label: 'Sad-Happy', colors: ['#8c6a4b', '#f4c542'] },
+      { value: 'anxious_calm', label: 'Anxious-Calm', colors: ['#2b4a73', '#a6cce1'] },
+      { value: 'tired_awake', label: 'Tired-Awake', colors: ['#6b4e30', '#f5a623'] },
+      { value: 'unsafe_safe', label: 'Unsafe-Safe', colors: ['#d9534f', '#5cb85c'] },
+      { value: 'isolated_belonging', label: 'Isolated-Belonging', colors: ['#4b4b4b', '#f4c842'] },
     ],
-    radius: 18,
-    maxDensity: 0.020833333333333336,
-    minDensity: 0
-  })
-
-  const createRenderer = attribute => ({
-    type: 'unique-value',
-    field: attribute,
-    uniqueValueInfos: createLegend(attribute)
-  })
-
-  const updateRenderer = (featureLayer, attribute, isHeatmap) => {
-    console.log('updating renderer')
-    console.log('attribute in updataRenderer:', attribute)
-    console.log('isHeatmap in updateRenderer:', isHeatmap)
-    featureLayer.renderer = isHeatmap
-      ? createHeatmapRenderer(attribute)
-      : createRenderer(attribute)
-  }
-
-  const handleAttributeChange = event => {
-    const attribute = event.target.value
-    setSelectedAttribute(attribute)
-    if (featureLayerRef.current) {
-      updateRenderer(featureLayerRef.current, attribute, isHeatmap)
-    }
-  }
-
-  const handleHeatmapToggle = () => {
-    const newHeatmapState = !isHeatmap;
-    setIsHeatmap(newHeatmapState);
-    updateRenderer(featureLayerRef.current, selectedAttribute, newHeatmapState);
   };
 
+   // Define emotion labels as options for map popup
+   const calmAnxiousOptions = [
+    { value: 1, label: 'Very Anxious' },
+    { value: 2, label: 'Anxious' },
+    { value: 3, label: 'Centered' },
+    { value: 4, label: 'Calm' },
+    { value: 5, label: 'Very Calm' },
+  ];
+
+  const happinessSadnessOptions = [
+    { value: 1, label: 'Despondent' },
+    { value: 2, label: 'Sad' },
+    { value: 3, label: 'Balanced' },
+    { value: 4, label: 'Happy' },
+    { value: 5, label: 'Elated' },
+  ];
+
+  const awakeTiredOptions = [
+    { value: 1, label: 'Exhausted' },
+    { value: 2, label: 'Tired' },
+    { value: 3, label: 'Awake' },
+    { value: 4, label: 'Alert' },
+    { value: 5, label: 'Energized' },
+  ];
+
+  const safetyOptions = [
+    { value: 1, label: 'Dangerous' },
+    { value: 2, label: 'Risky' },
+    { value: 3, label: 'Uncertain' },
+    { value: 4, label: 'Secure' },
+    { value: 5, label: 'Very Safe' },
+  ];
+
+  const belongingOptions = [
+    { value: 1, label: 'Alienated' },
+    { value: 2, label: 'Lonely' },
+    { value: 3, label: 'Ambivalent' },
+    { value: 4, label: 'Connected' },
+    { value: 5, label: 'Integrated' },
+  ];
+
+  const getEmotionLabel = (value, options) => {
+    const option = options.find(opt => opt.value === value);
+    return option ? option.label : 'Unknown';
+  };
+
+
   useEffect(() => {
-    let featureLayer
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [-98, 38.88],
+      zoom: 3,
+    });
 
-    const initializeMap = async () => {
-      try {
-        const [
-          Map,
-          MapView,
-          FeatureLayer,
-          HeatmapRenderer,
-          Legend,
-          Locate,
-          Search,
-          Expand,
-          PopupTemplate
-        ] = await loadModules(
-          [
-            'esri/Map',
-            'esri/views/MapView',
-            'esri/layers/FeatureLayer',
-            'esri/renderers/HeatmapRenderer',
-            'esri/widgets/Legend',
-            'esri/widgets/Locate',
-            'esri/widgets/Search',
-            'esri/widgets/Expand',
-            'esri/PopupTemplate'
-          ],
-          { css: true }
-        )
+    map.on('load', () => {
+      setMapInstance(map);
+      fetchGeoJSONData(map);
+    });
 
-        if (mapRef.current) {
-          const map = new Map({
-            basemap: 'streets-navigation-vector'
-          })
+    map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(new mapboxgl.ScaleControl());
 
-          const mapView = new MapView({
-            container: mapRef.current,
-            map: map,
-            center: [-98.5795, 39.8283],
-            zoom: 4,
-            navigation: {
-              mouseWheelZoomEnabled: false // Disable zoom on scroll for better UI experience on mobile devices
-            }
-          })
+    return () => map.remove();
+  }, []);
 
-          setView(mapView)
+  // Only run this effect when the selectedOption changes to update the map layer
+  useEffect(() => {
+    if (mapInstance) {
+      console.log('Updating heatmap with selected option:', selectedOption);
+      updateHeatmapLayer(mapInstance, selectedOption);
+    }
+  }, [selectedOption, mapInstance]);
 
-          // PopupTemplate
-          const popupTemplate = new PopupTemplate({
-            title: 'Experience Details',
-            content: [
-              {
-                type: 'fields',
-                fieldInfos: [
-                  {
-                    fieldName: 'locationName',
-                    label: 'Location Name',
-                    format: { dateFormat: 'short-date-short-time' }
-                  },
-                  {
-                    fieldName: 'datetime',
-                    label: 'Date & Time',
-                    format: { dateFormat: 'short-date-short-time' }
-                  },
-                  {
-                    fieldName: 'happinessSadness',
-                    label: 'Happiness / Sadness'
-                  },
-                  {
-                    fieldName: 'calmAnxious',
-                    label: 'Calm / Anxious'
-                  },
-                  {
-                    fieldName: 'awakeTired',
-                    label: 'Awake / Tired'
-                  },
-                  {
-                    fieldName: 'safety',
-                    label: 'Sense of Safety'
-                  },
-                  {
-                    fieldName: 'belonging',
-                    label: 'Sense of Belonging'
-                  },
-                  {
-                    fieldName: 'identityInterpretation',
-                    label: 'Identity Interpretation'
-                  }
-                ]
-              }
-            ]
-          })
-
-          // Add FeatureLayer
-          featureLayer = new FeatureLayer({
-            url: featureServiceUrl,
-            renderer: createRenderer(selectedAttribute),
-            popupTemplate: popupTemplate
-          })
-
-          map.add(featureLayer)
-
-          // Add Legend
-          const legend = new Legend({
-            view: mapView,
-            layerInfos: [
-              {
-                layer: featureLayer,
-                title: 'S3 User Experiences'
-              }
-            ]
-          })
-          mapView.ui.add(legend, 'bottom-left')
-
-          // Add a locate button to the view
-          const locateBtn = new Locate({
-            view: mapView
-          })
-
-          // Add the locate widget to the top left corner of the view (under the zoom buttons)
-          mapView.ui.add(locateBtn, {
-            position: 'top-left'
-          })
-
-          // Create the search widget
-          const searchWidget = new Search({
-            view: mapView
-          })
-
-          // Initialize and add the Expand widget to toggle the visibility of the Search widget
-          const searchExpand = new Expand({
-            expandIcon: 'search', // Use a search icon for the expand/collapse button. See https://developers.arcgis.com/calcite-design-system/icons/
-            expandTooltip: 'Expand Search', // Custom tooltip text for the expand button
-            view: mapView,
-            content: searchWidget
-          })
-
-          mapView.ui.add(searchExpand, {
-            position: 'top-left',
-            index: 2
-          })
+  // Function to flatten nested 'emotions' into top-level properties
+  const flattenEmotions = (geojsonData) => {
+    return {
+      ...geojsonData,
+      features: geojsonData.features.map(feature => ({
+        ...feature,
+        properties: {
+          ...feature.properties,
+          ...feature.properties.emotions // Spread the emotions properties into the top-level properties
         }
-      } catch (err) {
-        console.error(err)
-      }
-    }
+      }))
+    };
+  }
 
-    if (!view && mapRef.current) {
-      initializeMap().then(() => {
-        // Add event listener for attribute change
-        document
-          .getElementById('attribute-select')
-          .addEventListener('change', e => {
-            setSelectedAttribute(e.target.value)
-            updateRenderer(featureLayer, e.target.value, isHeatmap)
-          })
+  const fetchGeoJSONData = async (map) => {
+    try {
+      const response = await fetch('/api/geojson');
+      const geojsonData = await response.json();
 
-        //Add event listener for heatmap toggle button
-        document
-          .getElementById('heatmap-toggle')
-          .addEventListener('click', handleHeatmapToggle)
-      })
-    }
+      const flatEmotionJSON = flattenEmotions(geojsonData, 'emotions');
+      // TODO: add logic for flattenting identities
+      // flattenIdentities = flattenData(geojsonData, 'emotions');
+      map.addSource('point-data', {
+        type: 'geojson',
+        data: flatEmotionJSON,
+      });
 
-    return () => {
-      //Remove the eventListener for heatmap toggle button on component unmount to prevent memory leaks
-      document
-        .getElementById('heatmap-toggle')
-        .removeEventListener('click', handleHeatmapToggle)
+      // Reference: https://docs.mapbox.com/help/tutorials/make-a-heatmap-with-mapbox-gl-js/#what-is-the-purpose-of-a-heatmap
+      map.addLayer({
+        id: 'heatmap-id',
+        type: 'heatmap',
+        source: 'point-data',
+        paint: {
+          'heatmap-weight': [
+            'interpolate',
+            ['linear'],
+            ['get', selectedOption], // Initial emotion
+            1, 1,
+            5, 0
+          ],
+          'heatmap-intensity': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            0, 1,
+            9, 3
+          ],
+          'heatmap-color': [
+            'interpolate',
+            ['linear'],
+            ['heatmap-density'],
+            0, 'rgba(33,102,172,0)',
+            0.2, options.emotions.find(emotion => emotion.value === selectedOption).colors[0],
+            1, options.emotions.find(emotion => emotion.value === selectedOption).colors[1]
+          ],
+          'heatmap-radius': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            0, 2,
+            9, 20
+          ],
+          'heatmap-opacity': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            7, 1,   // Opacity is 1 at zoom level 7
+            12, 0.3 // Opacity is 0.3 at zoom level 12
+          ],
+        },
+      });
+
+      // Add point layer
+      map.addLayer({
+        id: 'points-id',
+        type: 'circle',
+        source: 'point-data',
+        paint: {
+          'circle-radius': 2,
+          'circle-color': '#bd831f',
+          'circle-stroke-width': 1,
+          'circle-stroke-color': '#fff'
+        }
+      });
+
+      // Add popups to points
+      map.on('click', 'points-id', (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const properties = e.features[0].properties;
+
+        const popupContent = `
+          <strong>${properties.locationName}</strong><br>
+          Feeling: ${getEmotionLabel(properties.sad_happy, happinessSadnessOptions)}<br>
+          Stress: ${getEmotionLabel(properties.anxious_calm, calmAnxiousOptions)}<br>
+          Alertness: ${getEmotionLabel(properties.tired_awake, awakeTiredOptions)}<br>
+          Safety: ${getEmotionLabel(properties.unsafe_safe, safetyOptions)}<br>
+          Belonging: ${getEmotionLabel(properties.isolated_belonging, belongingOptions)}
+        `;
+
+        new mapboxgl.Popup()
+          .setLngLat(coordinates)
+          .setHTML(popupContent)
+          .addTo(map);
+      });
+
+      // Change the cursor to a pointer when over a point
+      map.on('mouseenter', 'points-id', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      // Change it back when it leaves
+      map.on('mouseleave', 'points-id', () => {
+        map.getCanvas().style.cursor = '';
+      });
+
+      // Update the heatmap layer after it has been added
+      updateHeatmapLayer(map, selectedOption);
+
+      // Zoom the map to the extent of the data
+      const bounds = new mapboxgl.LngLatBounds();
+      geojsonData.features.forEach((feature) => {
+        bounds.extend(feature.geometry.coordinates);
+      });
+      map.fitBounds(bounds, {
+        padding: 20,
+        maxZoom: 12,
+      });
+
+    } catch (error) {
+      console.error('Error fetching or adding data:', error);
     }
-  }, [view, selectedAttribute, isHeatmap, handleHeatmapToggle])
+  };
+
+  const updateHeatmapLayer = (map, emotion) => {
+    const selectedEmotion = options.emotions.find(opt => opt.value === emotion);
+    const layer = map.getLayer('heatmap-id');
+    console.log('selectedEmotion in updateHeatmapLayer:', selectedEmotion);
+
+    if (layer) {
+      map.setPaintProperty('heatmap-id', 'heatmap-weight', [
+        'interpolate',
+        ['linear'],
+        ['get', emotion],
+        0, 0,
+        5, 1
+      ]);
+
+      map.setPaintProperty('heatmap-id', 'heatmap-color', [
+        'interpolate',
+        ['linear'],
+        ['heatmap-density'],
+        0, 'rgba(33,102,172,0)',
+        0.2, selectedEmotion.colors[0],
+        1, selectedEmotion.colors[1]
+      ]);
+    } else {
+      console.error('Heatmap layer not found when attempting to update.');
+    }
+  };
 
   return (
-    <div id='explore-section' className='explore-section'>
+    <div id='explore-header' className='explore-section'>
       <h1 className='section-header'>Explore the Map</h1>
       <p className='info-text'>
         Explore user experiences by selecting different emotions from the
         dropdown menu below. Click on a point to view more details.
       </p>
-      <div className='explore-container'>
-        <div className='select-container'>
-          <label htmlFor='attribute-select'>Select Emotion:</label>
+      <div style={{ position: 'relative', height: '100vh', width: '100%' }}>
+        <div id="map" style={{ height: '100%', width: '100%' }} />
+        <div
+          style={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            backgroundColor: 'white',
+            padding: '10px',
+            borderRadius: '5px',
+          }}
+        >
+          <span className='legend-title'>Legend</span>
+          <div className='legend-title'>
+            <span style={{
+              backgroundColor: '#bd831f',  // Circle color
+              width: '6px',                // Circle diameter matching the map point size
+              height: '6px',               // Circle diameter matching the map point size
+              display: 'inline-block',
+              borderRadius: '50%',         // Make it a circle
+              border: '1px solid #fff',    // Circle stroke color and width
+              marginRight: '5px'           // Space between the circle and text }}></span>
+
+            }}></span>
+          <span>Experience Locations</span>
+          </div>
           <select
-            id='attribute-select'
-            value={selectedAttribute}
-            onChange={handleAttributeChange}
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
+            style={{ marginTop: '10px', padding: '5px' }}
           >
-            {attributes.map(attribute => (
-              <option key={attribute} value={attribute}>
-                {attributeLabels[attribute]}
+            {options.emotions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
-          {/* TODO: FIX HEATMAP IMPLEMENTATION */}
-          <button
-            id='heatmap-toggle'
-            className='toggle-button'
-            onClick={handleHeatmapToggle}
-          >
-            {isHeatmap ? 'Show Unique Values' : 'Show Heatmap'}
-          </button>
         </div>
-        <div ref={mapRef} className='explore-map-container'></div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExploreMapComponent
+export default ExploreMapSection;
