@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, forwardRef  } from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
 
-const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
+const UserLocationComponent = forwardRef(({ formData, setFormData }, ref) => {
   const [userLocation, setUserLocation] = useState({ latitude: null, longitude: null });
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
@@ -174,4 +174,4 @@ const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
   );
 });
 
-export default MapComponent;
+export default UserLocationComponent;

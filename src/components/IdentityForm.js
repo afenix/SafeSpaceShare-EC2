@@ -7,7 +7,6 @@ const IdentityForm = ({ formData, handleChange }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [identityInterpretation, setIdentityInterpretation] = useState(formData.identityInterpretation || null);
   const { identityCategories, loading } = useIdentityCategories();
-
   const handleButtonClick = (value, e) => {
     e.preventDefault();
     setIdentityInterpretation(value);
@@ -22,14 +21,11 @@ const IdentityForm = ({ formData, handleChange }) => {
 
   const handleSubcategoryChange = (category, selectedOption) => {
     const updatedIdentities = (formData.selectedIdentities || []).filter(id => id.category !== category);
-
     const newIdentity = {
       category: category,
       subcategory: selectedOption.value,
     };
-
     const allIdentities = [...updatedIdentities, newIdentity];
-
     handleChange({ target: { name: 'selectedIdentities', value: allIdentities } });
   };
 
@@ -94,7 +90,6 @@ const IdentityForm = ({ formData, handleChange }) => {
                 value: subcategory.subcategory_name,
                 label: subcategory.subcategory_name
               }));
-
             return (
               <div key={category} className="mb-3">
                 <label htmlFor={`${category}-subcategory`} className="form-label">Select {category} Subcategory:</label>

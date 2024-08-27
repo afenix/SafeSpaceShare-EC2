@@ -60,7 +60,6 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
     e.preventDefault();
     handleSubmit(e);
     setIsSubmitted(true);
-    document.getElementById('explore-section').scrollIntoView({ behavior: 'smooth' });
   };
 
   if (!identityCategories) {
