@@ -5,10 +5,10 @@ INSERT INTO categories (category_name) VALUES
 ('Sexuality'),
 ('Political Views'),
 ('Economic Status'),
-('Gender Identity'),
+('Gender Expression'),
 ('Ethnicity'),
 ('Immigration Status'),
-('Race'),
+('Racial Identity'),
 ('Religious Beliefs'),
 ('Other');
 
@@ -29,20 +29,21 @@ INSERT INTO subcategories (category_id, subcategory_name) VALUES
 ((SELECT category_id FROM categories WHERE category_name = 'Sex'), 'Male'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sex'), 'Female'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sex'), 'Intersex'),
-((SELECT category_id FROM categories WHERE category_name = 'Sex'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Sex'), 'Transexual'),
+((SELECT category_id FROM categories WHERE category_name = 'Sex'), 'Other - Sex');
 
 -- Sexuality Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Asexual'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Gay'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Lesbian'),
-((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Heterosexual (Straight)'),
+((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Heterosexual'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Bi-sexual'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Queer'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Pansexual'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Demisexual'),
 ((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Questioning'),
-((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Sexuality'), 'Other - Sexuality');
 
 -- Political Views Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
@@ -54,7 +55,7 @@ INSERT INTO subcategories (category_id, subcategory_name) VALUES
 ((SELECT category_id FROM categories WHERE category_name = 'Political Views'), 'Green'),
 ((SELECT category_id FROM categories WHERE category_name = 'Political Views'), 'Communist'),
 ((SELECT category_id FROM categories WHERE category_name = 'Political Views'), 'Anarchist'),
-((SELECT category_id FROM categories WHERE category_name = 'Political Views'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Political Views'), 'Other - Political Views');
 
 -- Economic Status Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
@@ -65,20 +66,19 @@ INSERT INTO subcategories (category_id, subcategory_name) VALUES
 ((SELECT category_id FROM categories WHERE category_name = 'Economic Status'), 'Upper class'),
 ((SELECT category_id FROM categories WHERE category_name = 'Economic Status'), 'Unemployed'),
 ((SELECT category_id FROM categories WHERE category_name = 'Economic Status'), 'Retired'),
-((SELECT category_id FROM categories WHERE category_name = 'Economic Status'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Economic Status'), 'Other - Economic Status');
 
 -- Gender Identity Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Non-binary'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Genderqueer'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Genderfluid'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Transgender'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Cisgender'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Agender'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Bigender'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Two-Spirit'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Transexual'),
-((SELECT category_id FROM categories WHERE category_name = 'Gender Identity'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Non-binary'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Genderqueer'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Genderfluid'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Transgender'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Cisgender'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Agender'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Bigender'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Two-Spirit'),
+((SELECT category_id FROM categories WHERE category_name = 'Gender Expression'), 'Other - Gender Expression');
 
 -- Ethnicity Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
@@ -94,7 +94,7 @@ INSERT INTO subcategories (category_id, subcategory_name) VALUES
 ((SELECT category_id FROM categories WHERE category_name = 'Ethnicity'), 'Latin American'),
 ((SELECT category_id FROM categories WHERE category_name = 'Ethnicity'), 'Caribbean'),
 ((SELECT category_id FROM categories WHERE category_name = 'Ethnicity'), 'South Asian'),
-((SELECT category_id FROM categories WHERE category_name = 'Ethnicity'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Ethnicity'), 'Other - Ethnicity');
 
 -- Immigration Status Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
@@ -103,19 +103,19 @@ INSERT INTO subcategories (category_id, subcategory_name) VALUES
 ((SELECT category_id FROM categories WHERE category_name = 'Immigration Status'), 'Temporary worker'),
 ((SELECT category_id FROM categories WHERE category_name = 'Immigration Status'), 'Student visa holder'),
 ((SELECT category_id FROM categories WHERE category_name = 'Immigration Status'), 'Refugee or asylee'),
-((SELECT category_id FROM categories WHERE category_name = 'Immigration Status'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Immigration Status'), 'Other - Immigration Status');
 
 -- Race Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Black or African American'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'White or European American'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Multiracial'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Native Hawaiian or Other Pacific Islander'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Native American or Alaska Native'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Middle Eastern or North African'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Hispanic or Latino'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Asian'),
-((SELECT category_id FROM categories WHERE category_name = 'Race'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Black or African American'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'White or European American'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Multiracial'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Native Hawaiian or Other Pacific Islander'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Native American or Alaska Native'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Middle Eastern or North African'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Hispanic or Latino'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Asian'),
+((SELECT category_id FROM categories WHERE category_name = 'Racial Identity'), 'Other - Racial Identity');
 
 -- Religious Beliefs Subcategories
 INSERT INTO subcategories (category_id, subcategory_name) VALUES
@@ -128,4 +128,4 @@ INSERT INTO subcategories (category_id, subcategory_name) VALUES
 ((SELECT category_id FROM categories WHERE category_name = 'Religious Beliefs'), 'Hindu'),
 ((SELECT category_id FROM categories WHERE category_name = 'Religious Beliefs'), 'Christian'),
 ((SELECT category_id FROM categories WHERE category_name = 'Religious Beliefs'), 'Agnostic'),
-((SELECT category_id FROM categories WHERE category_name = 'Religious Beliefs'), 'Other');
+((SELECT category_id FROM categories WHERE category_name = 'Religious Beliefs'), 'Other - Religious Beliefs');
