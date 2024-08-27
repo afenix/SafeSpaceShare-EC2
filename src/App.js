@@ -2,22 +2,23 @@
 import React, { useEffect, useState } from 'react';
 import WelcomeSection from './components/WelcomeSection';
 import AboutSection from './components/AboutSection';
-import ActionSection from './components/ActionSection';
 import ContributeSection from './components/ContributeSection';
 import ExploreMapSection from './components/ExploreMapSection';
 import './App.css';
 
 const App = () => {
   const [mapKey] = useState(0); // State to trigger map re-initialization
-  const [setSubmissionResponse] = useState(null);
+  const [submissionResponse, setSubmissionResponse] = useState(null);
 
   const handleSubmit = async (formData) => {
     // Prepare the payload
+    // Handle use case where user answers "No"
+    const identities = (formData.selectedIdentities === 0) ? [] : formData.selectedIdentities;
     const payload = {
       datetime: formData.datetime,
       location: formData.location,
       locationName: formData.locationName,
-      selectedIdentities: formData.selectedIdentities,
+      selectedIdentities: identities,
       emotions: formData.emotions,
       finalThoughts: formData.finalThoughts
     };
@@ -49,7 +50,6 @@ const App = () => {
       <div id='about-section'>
         <AboutSection />
       </div>
-      <ActionSection />
       <div id="contribute">
         <ContributeSection onSubmit={handleSubmit} />
       </div>
