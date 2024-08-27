@@ -24,9 +24,12 @@ app.use(express.static(path.join(__dirname, '../build')));
 // API routes
 const experienceRoutes = require('./routes/experienceRoutes'); // Route for adding user experiences to db
 const identityRoutes = require('./routes/identityRoutes'); // Route for retrieving indentity category and subcategory data from db to server to frontend
+const mapDataRoutes = require('./routes/mapDataRoutes'); // Route for fetching and serving heatmap data
 
-app.use('/api', experienceRoutes); // Mounting experienceRoutes under /api
-app.use('/api', identityRoutes);   // Mounting identityRoutes under /api
+// Mount routes under /api in URL
+app.use('/api', experienceRoutes);
+app.use('/api', identityRoutes);
+app.use('/api', mapDataRoutes);
 
 // Catch all route to serve index.html for any unmatched routes (supports React Router)
 app.get('*', (req, res) => {

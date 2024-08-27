@@ -107,4 +107,78 @@ const getIdentityData = async () => {
       }
 };
 
-module.exports = { insertExperience, getIdentityData };
+const getGeojsonData = async (req, res) => {
+    try {
+        const { identityCategory, emotionType } = req.query;
+
+        let query = `
+        SELECT
+          ST_AsGeoJSON(l.geom) AS geometry,
+          l.location_name,
+          e.sad_happy,
+          e.anxious_calm,
+          e.tired_awake,
+          e.unsafe_safe,
+          e.isolated_belonging,
+          ARRAY_AGG(json_build_object(
+              'category', c.category_name,
+              'subIdentity', s.subcategory_name,
+              'description', i.identity_description
+          )) AS identities
+        FROM Locations l
+        LEFT JOIN Emotions e ON l.location_id = e.location_id
+        LEFT JOIN User_Identities ui ON l.location_id = ui.location_id
+        LEFT JOIN Identities i ON ui.identity_id = i.identity_id
+        LEFT JOIN Subcategories s ON i.subcategory_id = s.subcategory_id
+        LEFT JOIN Categories c ON s.category_id = c.category_id
+      `;
+
+      let queryParams = [];
+
+      if (identityCategory || emotionType) {
+        query += ` WHERE `;
+
+        if (identityCategory) {
+          queryParams.push(identityCategory);
+          query += `c.category_name = $${queryParams.length} `;
+        }
+
+        if (emotionType) {
+          if (queryParams.length > 0) query += ` AND `;
+          queryParams.push(emotionType);
+          query += `e.${emotionType} IS NOT NULL `;
+        }
+      }
+
+      query += `
+        GROUP BY l.location_id, l.geom, l.location_name, e.sad_happy, e.anxious_calm, e.tired_awake, e.unsafe_safe, e.isolated_belonging
+      `;
+
+      const result = await pool.query(query, queryParams);
+
+      const geojson = {
+        type: "FeatureCollection",
+        features: result.rows.map(row => ({
+          type: "Feature",
+          geometry: JSON.parse(row.geometry),
+          properties: {
+            locationName: row.location_name,
+            emotions: {
+              sad_happy: row.sad_happy,
+              anxious_calm: row.anxious_calm,
+              tired_awake: row.tired_awake,
+              unsafe_safe: row.unsafe_safe,
+              isolated_belonging: row.isolated_belonging,
+            },
+            identities: row.identities
+          }
+        }))
+      };
+      return res.json(geojson);
+    } catch (error) {
+      console.error('Error fetching heatmap data:', error);
+      res.status(500).send('Server Error');
+    }
+};
+
+module.exports = { insertExperience, getIdentityData, getGeojsonData };
