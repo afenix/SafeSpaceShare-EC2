@@ -13,6 +13,10 @@ form {
   margin: 0;
 }
 
+.text-content {
+  text-align: left;
+}
+
 .map-popup-text {
   font-family: "Dosis", sans-serif;
   font-optical-sizing: auto;
@@ -112,16 +116,26 @@ form {
   font-weight: 400;
   font-style: normal;
   color: whitesmoke;
+  font-size: large;
 }
 
-#sub-heading {
+.sub-heading {
   margin: 0 0 20px 0;
   font-family: "Madimi One", sans-serif;
   font-weight: 400;
   font-style: normal;
   color: whitesmoke;
+  font-size: 3rem;
 }
 
+.tagline {
+  margin: 20px 0 20px 0;
+  font-family: "Madimi One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: whitesmoke;
+  font-size: 2rem;
+}
 #form-submitted {
   font-size: 24px;
   font-weight: bold;
@@ -236,11 +250,19 @@ form {
   font-size: 20px;
   font-weight: bold;
   color: white;
-  background-color: #78b8cb; /* Yellow background */
+  background-color: #bd831f; /* Yellow background */
   border: none;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
   text-transform: uppercase;
+}
+
+#share-button {
+  background-color: #bd831f; /* Yellow background */
+}
+
+#explore-button {
+  background-color: #78b8cb;
 }
 
 .navigation-buttons button:hover {
@@ -290,14 +312,7 @@ form {
   margin: auto 2rem 0px 2rem;
 }
 
-#location-time-section {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  /* padding: 25px 50px; */
+#location-time-container {
   background-color: #78b8cb;
 }
 
@@ -354,8 +369,18 @@ form {
   text-transform: uppercase;
   color: white;
   text-align: left;
-  margin-bottom: 10px;
+  margin: 15px 0 10px 0;
   width: 100%; /* Ensure labels take full width */
+}
+
+.review-label.form-labels.primary-label {
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.review-label.form-labels.secondary-label {
+  font-size: 16px;
+  margin-top: 0;
 }
 
 .form-inputs {
@@ -423,33 +448,12 @@ input[type="datetime-local"] {
   background-color: #bd831f;
 }
 
-#emotions-section {
-  /* margin: 0 3.5rem 0 3.5rem ;
-  padding: 2rem 0 2rem 0;
-  text-align: center;
-  height: 100vh; */
-}
-
 #safety-container {
   background-color: #78b8cb;
 }
 
-#safety-section {
-  /* margin: 0 2.5rem 0 2.5rem ;
-  padding: 20px;
-  text-align: center;
-  height: 100vh; */
-}
-
 #belonging-container {
   background-color: #bd831f;
-}
-
-#belonging-section {
-  /* margin: 0 2.5rem 0 2.5rem !important;
-  padding: 20px !important;
-  text-align: center;
-  height: 100vh; */
 }
 
 .warning {
@@ -735,7 +739,6 @@ input[type="datetime-local"] {
 }
 
 .review-form .review-label {
-  margin: 0 5px 10px 0;
   color: white;
   width: 100%; /* Ensure labels take full width */
   text-align: left;

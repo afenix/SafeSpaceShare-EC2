@@ -227,12 +227,12 @@ const ReviewForm = ({ formData, handleChange, handleSubmit, identityCategories }
           {/* Identity Categories & Subcategories: */}
           {formData.selectedIdentities && formData.selectedIdentities.length > 0 && (
             <div className='form-field'>
-              <label className='review-label form-labels'>
+              <label className='review-label form-labels primary-label'>
                 Identity Categories & Subcategories:
               </label>
               {formData.selectedIdentities.map((identity, index) => (
                 <div key={index}>
-                  <label className='review-label form-labels'>
+                  <label className='review-label form-labels secondary-label'>
                     {identity.category}:
                   </label>
                   <Select
