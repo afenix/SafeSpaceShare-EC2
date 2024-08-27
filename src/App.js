@@ -50,10 +50,10 @@ const App = () => {
       <div id='about-section'>
         <AboutSection />
       </div>
-      <div id="contribute">
+      <div id="contribute-section">
         <ContributeSection onSubmit={handleSubmit} />
       </div>
-      <div id="explore">
+      <div id="explore-section">
         <ExploreMapSection key={mapKey}/>
       </div>
     </div>
