@@ -1,23 +1,11 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import React, { useState, useEffect, useCallback, forwardRef  } from 'react';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 
 const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
-
   const [userLocation, setUserLocation] = useState({ latitude: null, longitude: null });
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
-  const [infoWindow, setInfoWindow] = useState(null);
   const [showSearchBox, setShowSearchBox] = useState(false);
-
-  const markerPopup = `
-          <div>
-            <h4 class='map-popup-text'>Is this the location of your experience?</h4>
-            <div class='map-button-group'>
-              <button class=map-option-button id="confirm-location" style="margin-right: 5px;">Yes</button>
-              <button class=map-option-button id="deny-location">No</button>
-            </div>
-          </div>
-        `;
 
   // Effect to fetch the user's location when the component is mounted
   useEffect(() => {
@@ -41,90 +29,27 @@ const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
     fetchUserLocation();
   }, []);
 
-  // Effect to initialize the map and add the marker/info window when the user's location is available
-  useEffect(() => {
-    if (map && userLocation.latitude !== null && userLocation.longitude !== null) {
-      const location = { lat: userLocation.latitude, lng: userLocation.longitude };
+  // Style infoWindow
+  const markerPopup = `
+    <div>
+      <h4 class='map-popup-text'>Is this the location of your experience?</h4>
+      <div class='map-button-group'>
+        <button class=map-option-button id="confirm-location" style="margin-right: 5px;">Yes</button>
+        <button class=map-option-button id="deny-location">No</button>
+      </div>
+    </div>
+  `;
 
-      if (marker) {
-        marker.setMap(null); // Cleanup previous marker
-      }
-
-      const newMarker = new window.google.maps.Marker({
-        position: location,
-        map: map,
-      });
-
-      setMarker(newMarker);
-
-      if (infoWindow) {
-        infoWindow.close();
-        setInfoWindow(null);
-      }
-
-      const newInfoWindow = new window.google.maps.InfoWindow({
-        content: markerPopup,
-      });
-
-      newInfoWindow.open(map, newMarker);
-      setInfoWindow(newInfoWindow);
-
-      window.google.maps.event.addListenerOnce(newInfoWindow, 'domready', () => {
-        document.getElementById('confirm-location').addEventListener('click', handleConfirmLocation);
-        document.getElementById('deny-location').addEventListener('click', handleDenyLocation);
-      });
-    }
-  }, [map, userLocation]);
-
-  // Handle the map load event to store the map instance
-  const onLoad = (mapInstance) => {
-    setMap(mapInstance);
-
-    mapInstance.setOptions({
-      mapTypeControl: true,
-      mapTypeControlOptions: {
-        position: window.google.maps.ControlPosition.BOTTOM_LEFT
-      }
-    });
+  const formatDateToLocal = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  // Handle the "Yes" button click event
-  const handleConfirmLocation = () => {
-    // Update formData with the user's confirmed location
-    setFormData((prevData) => ({
-      ...prevData,
-      location: {
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude,
-      },
-    }));
-
-    // Remove the marker from the map
-    if (marker) {
-      marker.setMap(null);
-    }
-
-    if (infoWindow) {
-      console.log('infoWindow state is set so it should be closed now... ')
-      infoWindow.close();
-      setInfoWindow(null);  // Reset state to ensure proper management
-    }
-
-    // Scroll to the next section of the form
-    document.getElementById('location-time-section').scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // Handle the "No" button click event
-  const handleDenyLocation = () => {
-    if (infoWindow) {
-      infoWindow.close();
-      setInfoWindow(null);  // Reset state to ensure proper management
-    }
-    setShowSearchBox(true); // Show the search box for the user to enter a new location
-  };
-
-  // Handle the event when the user selects a place from the search box
-  const handlePlaceSelected = (autocomplete) => {
+  const handlePlaceSelected = useCallback((autocomplete) => {
     const place = autocomplete.getPlace();
     if (!place.geometry || !place.geometry.location) {
       console.error("Place has no geometry");
@@ -132,15 +57,15 @@ const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
     }
 
     const location = place.geometry.location;
-    map.panTo(location); // Pan map to selected location
+    const timestamp = formatDateToLocal(new Date());
+
+    map.panTo(location);
     setUserLocation({ latitude: location.lat(), longitude: location.lng() });
 
-    // Remove the previous marker
     if (marker) {
       marker.setMap(null);
     }
 
-    // Place a new marker at the selected location
     const newMarker = new window.google.maps.Marker({
       position: location,
       map: map,
@@ -148,48 +73,61 @@ const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
 
     setMarker(newMarker);
 
-    // CApture and update formData with the selected location's latitude and longitude
     setFormData((prevData) => ({
       ...prevData,
       location: {
         latitude: location.lat(),
         longitude: location.lng(),
       },
-      // if a user identifies a place, capture the location name and add it to the form
-      locationName: place.name || ''
+      locationName: place.name || '',
+      datetime: timestamp,
     }));
 
-    // Close any existing InfoWindow before creating a new one
-    if (infoWindow) {
-      console.log('infoWindow should be closing in the handlePlaceSelected')
-      infoWindow.close();
-    }
-
-    // Show a new confirmation info window
     const newInfoWindow = new window.google.maps.InfoWindow({
       content: markerPopup,
     });
-
     newInfoWindow.open(map, newMarker);
-    setInfoWindow(newInfoWindow);
 
-    // Attaches event listeners to the new info window buttons
     window.google.maps.event.addListenerOnce(newInfoWindow, 'domready', () => {
-      document.getElementById('confirm-location').addEventListener('click', handleConfirmLocation);
-      document.getElementById('deny-location').addEventListener('click', handleDenyLocation);
+      document.getElementById('confirm-location').addEventListener('click', () => handleConfirmLocation(newInfoWindow));
+      document.getElementById('deny-location').addEventListener('click', () => handleDenyLocation(newInfoWindow));
     });
-  };
+  }, [map, marker, setUserLocation, setMarker, setFormData]);
 
-  // Effect to initialize the Google Places Autocomplete when the search box is shown
   useEffect(() => {
     if (showSearchBox && map) {
       const input = document.getElementById('autocomplete');
       const autocomplete = new window.google.maps.places.Autocomplete(input);
-
-      // Handle the place selection
       autocomplete.addListener('place_changed', () => handlePlaceSelected(autocomplete));
     }
-  }, [showSearchBox, map]);
+  }, [showSearchBox, map, handlePlaceSelected]);
+
+  const onLoad = (mapInstance) => {
+    setMap(mapInstance);
+    setShowSearchBox(true);
+
+    mapInstance.setOptions({
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        position: window.google.maps.ControlPosition.BOTTOM_LEFT,
+      },
+    });
+  };
+
+  const handleConfirmLocation = (infoWindow) => {
+    if (marker) {
+      marker.setMap(null);
+    }
+
+    infoWindow.close();
+
+    document.getElementById('location-time-section').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleDenyLocation = (infoWindow) => {
+    infoWindow.close();
+    setShowSearchBox(true);
+  };
 
   return (
     <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} libraries={['places']}>
@@ -199,8 +137,9 @@ const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
             Let's Begin by Adding the Location of Your Experience
           </h1>
           <p className='map-instructions dark'>
-            Please confirm your location or search for the correct one.
+            Search for the address or name of the location where your experience happened.
           </p>
+          <p className='map-instructions dark'>Confirm it on the map to continue.</p>
         </div>
         {showSearchBox && (
           <input
@@ -224,9 +163,9 @@ const MapComponent = forwardRef(({ formData, setFormData }, ref) => {
             width: '100vw',
             margin: '20px',
           }}
-          center={{ lat: userLocation.latitude || 0, lng: userLocation.longitude || 0 }} // Center on user location
-          zoom={12} // Zoom level for the map
-          onLoad={onLoad} // Triggered when the map loads
+          center={{ lat: userLocation.latitude || 0, lng: userLocation.longitude || 0 }}
+          zoom={10}
+          onLoad={onLoad}
         >
           {/* The Marker and InfoWindow are managed separately in useEffect */}
         </GoogleMap>
