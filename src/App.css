@@ -788,6 +788,42 @@ input[type="datetime-local"] {
   margin: 0px 5px 5px 5px;
 }
 
+.legend-title {
+  color: #bd831f;
+}
+
+#map-container {
+  position: 'relative';
+  height: '100vh';
+  width: '100%';
+}
+
+.mapboxgl-popup-content {
+  color: #bd831f;
+}
+
+#map-outer {
+   height: '100%';
+    width: '100%';
+}
+
+#map-legend {
+  position: 'absolute';
+  top: 10;
+  left: 10;
+  background-color: 'white';
+  padding: '10px';
+  border-radius: '5px';
+}
+
+#map-legend-element {
+  background-color: '#007cbf';
+  width: '10px';
+  height: '10px';
+  display: 'inline-block';
+  margin-right: '5px';
+}
+
 
 .explore-section {
   height: 100vh;
@@ -795,7 +831,7 @@ input[type="datetime-local"] {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #e6ac00;
+  background-color: #bd831f;
   color: white;
   text-align: center;
   padding: 20px;
@@ -810,6 +846,8 @@ input[type="datetime-local"] {
 .form-headers {
   margin-bottom: 20px;
 }
+
+map
 
 .select-container {
   position: absolute;
