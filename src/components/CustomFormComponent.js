@@ -77,7 +77,7 @@ const CustomFormComponent = ({
         </div>
       </div>
       <div id='review-container'>
-        <div id='review-section' className='form-section'>
+        <div id='review-section'>
           <ReviewForm
             formData={formData}
             handleChange={handleChange}
