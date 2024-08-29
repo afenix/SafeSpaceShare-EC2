@@ -63,7 +63,7 @@ const CustomFormComponent = ({
         </div>
       </div>
       <div id='identity-container'>
-        <div id='identity-section' className='form-section'>
+        <div id='identity-section'>
           <IdentityForm formData={formData} handleChange={handleChange} />
         </div>
       </div>

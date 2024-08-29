@@ -1,4 +1,8 @@
-.App {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.main-container {
   text-align: center;
   font-family: "Dosis", sans-serif;
   font-optical-sizing: auto;
@@ -13,77 +17,6 @@ form {
   margin: 0;
 }
 
-.text-content {
-  text-align: left;
-}
-
-.map-popup-text {
-  font-family: "Dosis", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-  color: #636363;
-  padding: 0 20% 5%;
-  font-size: 16px;
-}
-
-.map-button-group {
-  display: flex; /* Use flexbox for easy horizontal alignment */
-  justify-content: space-around; /* Distribute buttons with space between */
-}
-
-.map-option-button {
-  padding: 10px 25px;
-  font-size: 12px;
-  font-weight: bold;
-  color: #4a90e2;
-  background-color: #ffd813;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  text-transform: uppercase;
-}
-
-.map-option-button:hover {
-  background-color: #fbc02d;
-  transform: scale(1.05);
-}
-
-.map-option-button:focus {
-  outline: none;
-}
-
-.map-option-button:active {
-  background-color: #e6ac00;
-}
-
-.map-option-button.selected {
-  background-color: #fbc02d;
-  transform: scale(1.05);
-  color: #ffffff;
-}
-
-/* Reset styles specifically for the Mapbox Geocoder input */
-.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--input {
-  border: none;
-  border-radius: 0;
-  font-size: inherit;
-  margin-bottom: 0;
-  max-width: none;
-  padding: 0;
-  width: auto;
-}
-
-.mapboxgl-ctrl-geocoder input[type="text"] {
-  border: none;
-  border-radius: 0;
-  font-size: inherit;
-  margin-bottom: 0;
-  max-width: none;
-  padding: 0;
-  width: auto;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -95,15 +28,16 @@ form {
 
 
 /* WELCOME SECTION */
-#welcome-section {
+.welcome-container {
   font-size: calc(10px + 2vmin);
   color: #636363;
   height: 100vh;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   justify-content: center;
   align-items: center;
   background-color: #78b8cb;
+  position: relative;
   text-align: center;
 }
 
@@ -125,7 +59,7 @@ form {
   font-weight: 400;
   font-style: normal;
   color: whitesmoke;
-  font-size: 3rem;
+  font-size: 2.7rem;
 }
 
 .tagline {
@@ -164,28 +98,24 @@ form {
   right: -1rem;
 }
 
-
-/* ABOUT SECTION */
-#about-section {
-  height: 100vh;
+.about-container {
+  background-image: url('/public/img/about_background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  text-align: center;
+  align-items: center;
   position: relative;
+  padding: 1rem 1rem;
 }
 
-.background-container {
-  background-image: url('/public/img/about_background.png'); /* Path to your background image */
-  background-size: cover; /* Cover the entire screen */
-  background-position: center; /* Center the background image */
-  background-repeat: no-repeat; /* Do not repeat the background image */
-  height: 100%; /* Full height */
-  width: 100%; /* Full width */
-  display: flex; /* Use flexbox for centering content */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  position: relative;
+.about-content {
+  margin: 0 auto;
+  font-size: 18px;
+  text-align: left;
 }
 
 #about-subtitle, #about-header {
@@ -193,12 +123,7 @@ form {
   font-family: "Madimi One", sans-serif;
   color: white;
   margin: 20px 0 20px 0;
-}
-
-#about-section p {
-  width: 50%;     /* Adjust the percentage as needed */
-  margin: 0 auto; /* Center the paragraph horizontally */
-  font-size: 18px;
+  font-size: 1.5rem;
 }
 
 /* Media query for smaller screens (adjust breakpoint as needed) */
@@ -206,13 +131,6 @@ form {
   #about-subtitle {
     left: 2rem;
   }
-}
-
-.content {
-  background-color: rgba(255, 255, 255, 0); /* Semi-transparent background for readability */
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
 }
 
 /* Media query for smaller screens (adjust breakpoint as needed) */
@@ -336,6 +254,10 @@ form {
   text-align: center;
 }
 
+form {
+  margin-top: 20px;
+}
+
 .form-subheader {
   font-family: "Madimi One", sans-serif;
   font-weight: 400;
@@ -347,13 +269,28 @@ form {
   text-align: center;
 }
 
-#location-date-container {
+/* Ensure the container for sections uses flexbox for layout */
+.form-container {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center the container horizontally */
-  gap: 20px; /* Add some gap between form-group divs */
-  width: 100%;
+  /* gap: 20px; adds spacing between sections  */
+  background-color:  #bd831f;
 }
+
+.form-inputs {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%; /* Ensure inputs take full width */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.form-content {
+  font-size: 20px;
+  color: white;
+  margin: 0;
+}
+
 
 .form-group {
   display: flex;
@@ -384,21 +321,12 @@ form {
   margin-top: 0;
 }
 
-.form-inputs {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100%; /* Ensure inputs take full width */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-.form-content {
-  font-size: 20px;
-  color: white;
-  margin: 0;
-}
-form {
-  margin-top: 20px;
+#location-date-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the container horizontally */
+  gap: 20px; /* Add some gap between form-group divs */
+  width: 100%;
 }
 
 .list-container {
@@ -549,81 +477,44 @@ input[type="datetime-local"] {
   background-color: #FFD700;
 }
 
+
+/* IDENTITY STYLING */
+
 #identity-container {
   background-color: #78b8cb;
-}
-
-#final-thoughts-container {
-  background-color: #bd831f;
+  padding: 20px; /* Padding to provide space inside the container */
+  box-sizing: border-box; /* Ensure padding is included in the width/height */
+  height: auto;
 }
 
 /* Ensure the container can grow with content */
-#identity-section,
-#final-thoughts-section {
-  margin: 0 2rem 0 2rem;
-  padding: 0 20px 0 20px;
-  text-align: center;
-  min-height: 100vh; /* Ensures the section is at least as tall as the viewport */
+#identity-section {
+  display: flex;
+  flex-direction: column; /* Stack child elements vertically */
+  gap: 20px; /* Space between child elements */
+  padding: 20px;
+  box-sizing: border-box;
 }
-
 
 #identity-section .hint {
   font-style: italic;
   color: black;
 }
 
-#identity-section .button-group {
+#identity-section .identity-option-button-group {
   display: flex;
-  justify-content: center; /* Center the buttons horizontally */
-  align-items: center; /* Center the buttons vertically */
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 10px; /* Space between buttons */
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
   margin: 20px 0;
 }
 
-/* Styling specific to the final-thoughts section */
-#final-thoughts-section .hint {
-  font-style: italic;
-  color: black;
-}
-
-#final-thoughts-section textarea {
-  width: 90%;
-  height: 150px;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: vertical;
-}
-
-/* Ensure the container for sections uses flexbox for layout */
-.form-container {
-  display: flex;
-  flex-direction: column;
-  /* gap: 20px; adds spacing between sections  */
-  background-color:  #bd831f;
-}
-
-/* Responsive design to maintain layout integrity */
-@media (max-width: 768px) {
-  #identity-section,
-  #final-thoughts-section {
-    margin: 1rem;
-    padding: 2.5rem;
-  }
-
-  #final-thoughts-section textarea {
-    width: 100%;
-    height: 120px;
-  }
-}
-
-.button-group {
+.identity-option-button-group {
   margin: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10rem;
+  gap: 2rem;
   margin-top: 50px;
   color: #4a90e2;
 }
@@ -660,6 +551,71 @@ input[type="datetime-local"] {
   transform: scale(1.05);
   color: #ffffff;
 }
+
+/* Elements added dynamically, with consistent spacing */
+.mb-3 {
+  margin-bottom: 20px; /* Ensure space between dynamically added elements */
+  width: 100%; /* Full width to ensure alignment within the section */
+}
+
+/* Responsive adjustments specifically for mobile devices */
+@media (max-width: 768px) {
+  #identity-container {
+    padding: 10px; /* Smaller padding for smaller screens */
+  }
+  #identity-section {
+    padding: 10px;
+    gap: 10px; /* Reduce gap between elements on smaller screens */
+  }
+  .mb-3 {
+    margin-bottom: 10px; /* Smaller margin for mobile screens */
+  }
+}
+
+/* Final thoughts styling */
+
+/* Styling specific to the final-thoughts section */
+#final-thoughts-section .hint {
+  font-style: italic;
+  color: black;
+}
+
+#final-thoughts-container {
+  background-color: #bd831f;
+}
+
+#final-thoughts-section {
+  margin: 0 2rem;
+  padding: 0 20px;
+  text-align: center;
+  min-height: 100vh;  /* Ensures the section is at least as tall as the viewport */
+}
+
+#final-thoughts-section textarea {
+  width: 90%;
+  height: 150px;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+
+/* Responsive design to maintain layout integrity */
+@media (max-width: 768px) {
+  #final-thoughts-section {
+    margin: 1rem;
+    padding: 2.5rem;
+  }
+
+  #final-thoughts-section textarea {
+    width: 100%;
+    height: 120px;
+  }
+}
+
+
 
 /* REVIEW FORM SECTION */
 
@@ -1048,4 +1004,71 @@ map
 
 #heatmap-toggle {
   display:none;
+}
+
+.map-popup-text {
+  font-family: "Dosis", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  color: #636363;
+  padding: 0 20% 5%;
+  font-size: 16px;
+}
+
+.map-button-group {
+  display: flex; /* Use flexbox for easy horizontal alignment */
+  justify-content: space-around; /* Distribute buttons with space between */
+}
+
+.map-option-button {
+  padding: 10px 25px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #4a90e2;
+  background-color: #ffd813;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  text-transform: uppercase;
+}
+
+.map-option-button:hover {
+  background-color: #fbc02d;
+  transform: scale(1.05);
+}
+
+.map-option-button:focus {
+  outline: none;
+}
+
+.map-option-button:active {
+  background-color: #e6ac00;
+}
+
+.map-option-button.selected {
+  background-color: #fbc02d;
+  transform: scale(1.05);
+  color: #ffffff;
+}
+
+/* Reset styles specifically for the Mapbox Geocoder input */
+.mapboxgl-ctrl-geocoder .mapboxgl-ctrl-geocoder--input {
+  border: none;
+  border-radius: 0;
+  font-size: inherit;
+  margin-bottom: 0;
+  max-width: none;
+  padding: 0;
+  width: auto;
+}
+
+.mapboxgl-ctrl-geocoder input[type="text"] {
+  border: none;
+  border-radius: 0;
+  font-size: inherit;
+  margin-bottom: 0;
+  max-width: none;
+  padding: 0;
+  width: auto;
 }

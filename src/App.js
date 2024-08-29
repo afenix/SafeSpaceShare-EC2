@@ -43,7 +43,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="App">
+    <div className="main-container">
       <div id="welcome-section">
         <WelcomeSection />
       </div>

@@ -39,7 +39,7 @@ const IdentityForm = ({ formData, handleChange }) => {
   }));
 
   return (
-    <div>
+    <>
       <h1 className='section-header'>Is Your Experience Related to Your Perceived Identity?</h1>
       <p className='info-text'>
         Do you feel your experience is related in any way to your perceived identity?
@@ -48,7 +48,7 @@ const IdentityForm = ({ formData, handleChange }) => {
         <i>Hint: Consider aspects such as gender, religious or political views, race, ethnicity, etc.</i>
       </p>
 
-      <div className="button-group mb-3">
+      <div className="identity-option-button-group mb-3">
         <button
           className={`option-button ${identityInterpretation === 1 ? 'selected' : ''}`}
           onClick={(e) => handleButtonClick(1, e)}
@@ -106,7 +106,7 @@ const IdentityForm = ({ formData, handleChange }) => {
           })}
         </>
       )}
-    </div>
+    </>
   );
 };
 
