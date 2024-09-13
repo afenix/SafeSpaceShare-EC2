@@ -6,7 +6,6 @@ Safe Space Share is a mobile-first React application designed to collect and vis
 
 - **Frontend**:
     - **React**: Provides a dynamic and responsive user interface.
-    - **Bootstrap**: Used for styling and ensuring a consistent, responsive design across different devices.
 - **Backend**:
     - **Express**: Handles API requests and server-side logic.
     - **Node.js**: The runtime environment for executing JavaScript on the server.
